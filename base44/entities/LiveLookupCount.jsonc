@@ -1,0 +1,52 @@
+{
+  "name": "LiveLookupCount",
+  "type": "object",
+  "description": "How many travel-time lookups live location caused for one barber on one day, so the Mapbox cost is visible. A counter only: it holds no position.",
+  "properties": {
+    "team_member_id": {
+      "type": "string",
+      "description": "The barber."
+    },
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The Sydney day counted."
+    },
+    "lookups": {
+      "type": "number",
+      "default": 0,
+      "description": "Lookups made (successful or not)."
+    },
+    "failures": {
+      "type": "number",
+      "default": 0,
+      "description": "Of those, how many returned no usable drive time."
+    }
+  },
+  "required": [
+    "team_member_id",
+    "service_date"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

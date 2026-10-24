@@ -1,0 +1,128 @@
+{
+  "name": "GroupDiscountSettings",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether group booking discounts are active"
+    },
+    "max_group_booking_people": {
+      "type": "number",
+      "default": 6,
+      "description": "Maximum number of participants allowed in a single public group booking"
+    },
+    "max_bookings_per_day": {
+      "type": "number",
+      "default": 8,
+      "description": "Maximum number of booking requests allowed per day. Drives public day-status (available / filling up / limited / full). Counts actual bookings, not add-ons."
+    },
+    "service_centre_lat": {
+      "type": "number",
+      "description": "Global service centre latitude. The single origin point for all service-radius calculations and coverage visualisation. Customer location tier (core / extended / additional / outside) is determined by distance from this point."
+    },
+    "service_centre_lng": {
+      "type": "number",
+      "description": "Global service centre longitude. The single origin point for all service-radius calculations and coverage visualisation."
+    },
+    "service_centre_address": {
+      "type": "string",
+      "description": "Formatted address of the global service centre (display only)."
+    },
+    "core_radius_km": {
+      "type": "number",
+      "default": 15,
+      "description": "Core service radius in kilometres from the global service centre. Customers within this distance are classified as 'core' (highest priority). Must be less than extended_radius_km."
+    },
+    "extended_radius_km": {
+      "type": "number",
+      "default": 25,
+      "description": "Extended service radius in kilometres. Customers between core and extended are 'extended' (standard serviceable area). Must be less than maximum_service_radius_km."
+    },
+    "maximum_service_radius_km": {
+      "type": "number",
+      "default": 35,
+      "description": "Maximum / additional service radius in kilometres from the global service centre. Customers between extended and maximum are 'additional' (outer serviceable area). Customers beyond this distance cannot submit a booking. This is the single source of truth for the hard service boundary, location tier classification, and map coverage. Not drawn on the map."
+    },
+    "tier_2_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "percentage"
+      ],
+      "default": "fixed",
+      "description": "Discount type for 2 people (fixed $ or percentage %)"
+    },
+    "tier_2_amount": {
+      "type": "number",
+      "default": 10,
+      "description": "Discount amount for 2 people"
+    },
+    "tier_3_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "percentage"
+      ],
+      "default": "fixed",
+      "description": "Discount type for 3 people"
+    },
+    "tier_3_amount": {
+      "type": "number",
+      "default": 21,
+      "description": "Discount amount for 3 people"
+    },
+    "tier_4plus_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "percentage"
+      ],
+      "default": "percentage",
+      "description": "Discount type for 4+ people"
+    },
+    "tier_4plus_amount": {
+      "type": "number",
+      "default": 10,
+      "description": "Discount amount for 4+ people"
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Optional barber override; null/empty = business default. Supports future per-barber discount settings."
+    }
+  },
+  "required": [
+    "enabled"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

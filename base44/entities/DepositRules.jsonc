@@ -1,0 +1,104 @@
+{
+  "name": "DepositRules",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Master switch. When off, no booking ever requires a deposit."
+    },
+    "deposit_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "percentage"
+      ],
+      "default": "fixed",
+      "description": "Group-booking rule only: fixed dollar amount, or a percentage of the booking price."
+    },
+    "deposit_amount": {
+      "type": "number",
+      "default": 20,
+      "description": "Group-booking rule only: dollars when fixed, percent (0-100) when percentage. Never more than the booking price. 0 turns the group rule off."
+    },
+    "require_for_new_clients": {
+      "type": "boolean",
+      "default": false,
+      "description": "Legacy, no longer read. Replaced by new_client_deposit_amount."
+    },
+    "min_no_shows": {
+      "type": "number",
+      "default": 1,
+      "description": "Trigger: client has at least this many recorded no-shows (counted from NoShowRecord). 0 turns this trigger off."
+    },
+    "min_booking_value": {
+      "type": "number",
+      "default": 0,
+      "description": "Legacy, no longer read."
+    },
+    "group_min_people": {
+      "type": "number",
+      "default": 0,
+      "description": "Group rule: minimum group size that triggers a deposit. 0 turns the group rule off."
+    },
+    "new_client_deposit_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Deposit in dollars asked of a new client (no earlier completed booking). 0 = no new-client deposit."
+    },
+    "after_hours_deposit_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Deposit in dollars for an after-hours booking. 0 = no after-hours deposit."
+    },
+    "no_show_deposit_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Deposit in dollars always asked once the client reaches min_no_shows. 0 = no no-show deposit."
+    },
+    "link_expiry_hours": {
+      "type": "number",
+      "default": 24,
+      "description": "How many hours a payment link stays valid after it is requested."
+    },
+    "allow_waive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether an admin may waive a deposit (a reason is always required and recorded)."
+    }
+  },
+  "required": [
+    "enabled"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name": "SchedulingSettings",
+  "type": "object",
+  "properties": {
+    "auto_lock_confirmed": {
+      "type": "boolean",
+      "default": true,
+      "description": "When enabled, confirmed appointments are protected from Auto Sort movement. This should normally stay enabled."
+    },
+    "allow_manual_move_locked": {
+      "type": "boolean",
+      "default": true,
+      "description": "When enabled, locked appointments can be manually moved after a warning. When disabled, locked appointments cannot be dragged until manually unlocked."
+    },
+    "allow_manual_move_confirmed": {
+      "type": "boolean",
+      "default": true,
+      "description": "When enabled, confirmed appointments can be manually moved after a stronger warning. When disabled, confirmed appointments must first be changed out of Confirmed state before moving."
+    }
+  },
+  "required": [
+    "auto_lock_confirmed"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

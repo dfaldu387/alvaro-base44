@@ -1,0 +1,59 @@
+{
+  "name": "CampaignDryRunChange",
+  "type": "object",
+  "properties": {
+    "previous_value": {
+      "type": "boolean",
+      "description": "Dry-run mode before the change (true = ON)."
+    },
+    "new_value": {
+      "type": "boolean",
+      "description": "Dry-run mode after the change (true = ON)."
+    },
+    "changed_by": {
+      "type": "string",
+      "description": "Name of the admin who made the change."
+    },
+    "changed_by_email": {
+      "type": "string",
+      "description": "Email of that admin."
+    },
+    "changed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the change was made."
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Who approved the preview before dry-run was switched OFF (required for OFF)."
+    }
+  },
+  "required": [
+    "previous_value",
+    "new_value",
+    "changed_by",
+    "changed_at"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

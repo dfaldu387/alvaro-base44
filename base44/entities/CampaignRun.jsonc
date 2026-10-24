@@ -1,0 +1,138 @@
+{
+  "name": "CampaignRun",
+  "type": "object",
+  "properties": {
+    "campaign_week": {
+      "type": "string",
+      "description": "ISO week in the campaign timezone, e.g. 2026-W42."
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "outreach",
+        "followup"
+      ]
+    },
+    "run_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date of the run in the campaign timezone."
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "manual"
+      ]
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "dry_run",
+        "live"
+      ],
+      "description": "dry_run records a preview and queues nothing."
+    },
+    "live_blocked_reason": {
+      "type": "string",
+      "description": "Why a run that was meant to be live ran as a dry run instead (e.g. templates not approved)."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "complete",
+        "failed"
+      ]
+    },
+    "actor_name": {
+      "type": "string"
+    },
+    "max_per_run": {
+      "type": "number",
+      "description": "The limit in force for this run."
+    },
+    "messages_counted": {
+      "type": "number",
+      "description": "Messages newly queued (live) or that would be queued (dry run), counted against the limit."
+    },
+    "unique_clients": {
+      "type": "number",
+      "description": "Distinct clients those messages are for."
+    },
+    "eligible_total": {
+      "type": "number",
+      "description": "Clients that passed every rule, before the limit."
+    },
+    "capped_count": {
+      "type": "number",
+      "description": "Eligible clients left for the next run because the limit was reached."
+    },
+    "skipped_count": {
+      "type": "number",
+      "description": "Clients excluded, each with a recorded reason."
+    },
+    "already_processed": {
+      "type": "number",
+      "description": "Clients that already had this stage queued this week."
+    },
+    "skip_reasons": {
+      "type": "object",
+      "description": "Count of skipped clients by reason code."
+    },
+    "aggregates": {
+      "type": "object",
+      "description": "Clients that were not candidates: not_due, no_cadence, out_of_scope (not Regular)."
+    },
+    "cap_rule": {
+      "type": "string",
+      "description": "Plain-language statement of how the limit counts."
+    },
+    "error": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "campaign_week",
+    "stage"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

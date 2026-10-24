@@ -1,0 +1,136 @@
+{
+  "name": "BookingReplyFlag",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking the customer's reply was matched to."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The matched client."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "customer_confirmed",
+        "needs_attention"
+      ],
+      "description": "customer_confirmed = replied YES/Y/YEP/CONFIRM. needs_attention = replied NO/CANCEL/RESCHEDULE, or the assistant recorded a change request; the booking is NOT changed, a human decides."
+    },
+    "reply_text": {
+      "type": "string",
+      "description": "The customer's original reply, exactly as sent."
+    },
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The matched booking's service date."
+    },
+    "provider_message_id": {
+      "type": "string",
+      "description": "Twilio MessageSid of the reply; makes a webhook retry store the flag once."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "resolved"
+      ],
+      "default": "open",
+      "description": "needs_attention flags stay open until an admin marks them handled."
+    },
+    "resolved_by": {
+      "type": "string",
+      "description": "Who marked it handled."
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was marked handled."
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "keyword",
+        "assistant"
+      ],
+      "default": "keyword",
+      "description": "keyword = an exact YES/NO/CANCEL/RESCHEDULE reply. assistant = the AI assistant recorded a free-text change request."
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "time",
+        "date",
+        "service",
+        "address",
+        "other"
+      ],
+      "description": "Assistant change requests only: what the customer asked to change."
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request message arrived."
+    },
+    "booking_schedule_status": {
+      "type": "string",
+      "description": "The booking's schedule_status when the request arrived (e.g. confirmed or locked), for the reader. The booking itself is never touched."
+    },
+    "suggested_options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "start_decimal": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "Assistant reschedule requests on a confirmed or locked booking: up to three times the scheduling engine says are valid, inside what the customer asked for. Only suggestions: Alvaro picks one with a tap, which places it through the normal validated placement. The assistant never moves the booking."
+    }
+  },
+  "required": [
+    "booking_request_id",
+    "kind"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

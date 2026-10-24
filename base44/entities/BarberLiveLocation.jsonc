@@ -1,0 +1,86 @@
+{
+  "name": "BarberLiveLocation",
+  "type": "object",
+  "description": "One row per barber, overwritten in place, never appended. It holds the barber's own switch for today and, only while a stop is on the way, ONE latest position. Deleted when the switch goes off or the day ends; the position is cleared when it is older than 5 minutes or the barber arrives. There is no history, trail or log. Never readable from the browser: only server functions touch it.",
+  "properties": {
+    "team_member_id": {
+      "type": "string",
+      "description": "The barber this row belongs to. Always the signed-in barber's own profile, never taken from the request."
+    },
+    "user_id": {
+      "type": "string",
+      "description": "The login that switched sharing on."
+    },
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The Sydney working day the switch is on for. A row for any other day is deleted: sharing never carries over to tomorrow."
+    },
+    "sharing_on": {
+      "type": "boolean",
+      "default": true,
+      "description": "True while the barber has Share my location for today switched on."
+    },
+    "lat": {
+      "type": "number",
+      "description": "Latest latitude. Empty when there is no current fix."
+    },
+    "lng": {
+      "type": "number",
+      "description": "Latest longitude. Empty when there is no current fix."
+    },
+    "accuracy_m": {
+      "type": "number",
+      "description": "The device's accuracy radius for that fix, in metres."
+    },
+    "taken_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the device took that fix."
+    },
+    "travel_stop_id": {
+      "type": "string",
+      "description": "The stop (booking id) the last travel-time lookup was for."
+    },
+    "travel_checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last travel-time lookup was started. The throttle reads this."
+    },
+    "travel_drive_minutes": {
+      "type": "number",
+      "description": "Road minutes from the fix to that stop. Empty when the lookup failed."
+    },
+    "travel_measured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When that road time was measured."
+    }
+  },
+  "required": [
+    "team_member_id",
+    "service_date"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

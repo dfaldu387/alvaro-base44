@@ -1,0 +1,40 @@
+{
+  "description": "Automatically places new booking requests when Route Flow is enabled in auto-place mode. Runs server-side on BookingRequest creation \u2014 no client page required.",
+  "name": "Route Flow Auto-Place",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "route_flow_auto_place",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "auto_place": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "routeFlowAutoPlaceV2",
+            "args": {
+              "booking_request_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Auto-place booking",
+            "description": "Find provisional slot if Route Flow is active"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "BookingRequest"
+    }
+  }
+}

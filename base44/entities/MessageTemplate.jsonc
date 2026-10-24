@@ -1,0 +1,71 @@
+{
+  "name": "MessageTemplate",
+  "type": "object",
+  "properties": {
+    "template_key": {
+      "type": "string",
+      "description": "Stable key the system uses to pick this template, e.g. booking_confirmed. Unique in practice: the seed function never creates a second row for a key, and the renderer uses the oldest row if a duplicate ever exists."
+    },
+    "name": {
+      "type": "string",
+      "description": "Friendly name shown in the editor"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "sms",
+        "whatsapp",
+        "email"
+      ],
+      "default": "sms",
+      "description": "Delivery channel this wording is written for. The sweep refuses to send it on any other channel."
+    },
+    "body": {
+      "type": "string",
+      "description": "Message text with {{variable}} placeholders, e.g. {{name}}, {{date}}, {{window}}, {{time}}. A placeholder with no value in the outbox payload dead-letters the message instead of sending it."
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false the sweep suppresses messages that use this template (nothing is sent)."
+    },
+    "description": {
+      "type": "string",
+      "description": "What triggers this message"
+    }
+  },
+  "required": [
+    "template_key"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

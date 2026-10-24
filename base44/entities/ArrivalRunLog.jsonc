@@ -1,0 +1,111 @@
+{
+  "name": "ArrivalRunLog",
+  "type": "object",
+  "properties": {
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The service date the arrival-time job looked at (Australia/Sydney)."
+    },
+    "route_id": {
+      "type": "string",
+      "description": "DayRoute id, or 'no-route' for bookings on a day with no finalised route. One row per date + route, updated on every run."
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Barber the route belongs to (display only)."
+    },
+    "route_status": {
+      "type": "string",
+      "description": "The route's status when the job looked at it: draft, finalising, finalised, needs_update, or none."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "nothing_new",
+        "skipped"
+      ],
+      "description": "queued = at least one message was newly queued; nothing_new = everything was already queued; skipped = the route did not qualify."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Plain-language reason shown to an admin when the route or some bookings were skipped."
+    },
+    "queued_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Messages newly queued on the latest run."
+    },
+    "already_queued_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Bookings that already had their arrival message queued."
+    },
+    "skipped_bookings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "booking_request_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Bookings left out, each with a reason. No names or phone numbers."
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "finalise",
+        "admin"
+      ],
+      "description": "What started the run."
+    },
+    "run_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the latest run happened."
+    }
+  },
+  "required": [
+    "service_date",
+    "route_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

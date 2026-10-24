@@ -1,0 +1,40 @@
+{
+  "name": "Payment Follow-up",
+  "description": "When a payment is recorded (Square, an admin, or the barber taking cash): stop any payment text that is no longer owed and send one receipt for the payment.",
+  "trigger": {
+    "condition": "${ .trigger.data.event_type | IN(\"payment_received\", \"provider_payment\", \"provider_webhook_payment\", \"deposit_waived\", \"written_off\") }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "PaymentEvent"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "payment_follow_up",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "follow_up": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "paymentFollowUp",
+            "args": {
+              "payment_event_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Receipt and clean-up",
+            "description": "One receipt per payment"
+          }
+        }
+      }
+    ]
+  }
+}

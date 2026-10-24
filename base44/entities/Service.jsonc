@@ -1,0 +1,127 @@
+{
+  "name": "Service",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Service name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Service description"
+    },
+    "price": {
+      "type": "number",
+      "description": "Service price in dollars"
+    },
+    "duration_mins": {
+      "type": "number",
+      "description": "Approximate duration in minutes"
+    },
+    "buffer_mins": {
+      "type": "number",
+      "default": 0,
+      "description": "Buffer time added after the service for cleanup / travel prep. Affects calendar occupancy (total calendar time = duration_mins + buffer_mins) but does not increase the displayed service duration."
+    },
+    "color": {
+      "type": "string",
+      "default": "#8B5CF6",
+      "description": "Service accent colour (hex). Used as the appointment stripe colour on the calendar."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Haircut",
+        "Beard",
+        "Kids",
+        "Package",
+        "Other"
+      ],
+      "description": "Service category for grouping and filtering"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Custom service photo URL"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Active services appear in booking; inactive remain in admin and history"
+    },
+    "show_on_website": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show on the public website price list"
+    },
+    "group_booking_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "This service can be used in group bookings"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured service (homepage highlight)"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Display order"
+    },
+    "available_addons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Add-on ids compatible with this service"
+    },
+    "suggested_products": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Product ids suggested after this service"
+    },
+    "square_item_id": {
+      "type": "string",
+      "description": "Square catalogue item id (optional, for future sync)"
+    }
+  },
+  "required": [
+    "name",
+    "price",
+    "duration_mins"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

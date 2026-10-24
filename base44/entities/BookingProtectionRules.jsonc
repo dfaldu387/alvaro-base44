@@ -1,0 +1,83 @@
+{
+  "name": "BookingProtectionRules",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Master switch for public-booking protection. Off = nothing is ever held for review. A missing record behaves as on, with the built-in starting values."
+    },
+    "max_per_phone_hour": {
+      "type": "number",
+      "default": 10,
+      "description": "Booking submissions allowed from one phone number (matched after normalising, so formatting never matters) in a rolling hour. The next one is held for review, never rejected. 0 turns this check off."
+    },
+    "max_per_email_hour": {
+      "type": "number",
+      "default": 10,
+      "description": "Submissions allowed from one email address in a rolling hour. 0 turns this check off."
+    },
+    "max_per_ip_hour": {
+      "type": "number",
+      "default": 20,
+      "description": "Submissions allowed from one network address in a rolling hour. Higher than the phone limit because many real customers can share one connection. Only a one-way fingerprint of the address is stored. 0 turns this check off."
+    },
+    "max_active_unconfirmed": {
+      "type": "number",
+      "default": 3,
+      "description": "Open (pending, unconfirmed) bookings allowed at once for one customer. Held bookings do not count. 0 turns this check off."
+    },
+    "max_names_per_phone_day": {
+      "type": "number",
+      "default": 5,
+      "description": "Different names allowed on one phone number in 24 hours before the request is held. Set above a normal family size. 0 turns this check off."
+    },
+    "flag_outer_tier": {
+      "type": "boolean",
+      "default": true,
+      "description": "Hold a request whose address is in the outer service ring (beyond the extended radius but inside the maximum radius) for a person to look at."
+    },
+    "repeat_declined_hours": {
+      "type": "number",
+      "default": 24,
+      "description": "Hold an exact repeat of a request that was declined within this many hours. 0 turns this check off."
+    },
+    "late_cancel_hours": {
+      "type": "number",
+      "default": 24,
+      "description": "A customer cancellation made less than this many hours before the appointment counts as a late cancellation in the client's history."
+    }
+  },
+  "required": [],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

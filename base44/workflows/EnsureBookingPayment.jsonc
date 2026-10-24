@@ -1,0 +1,40 @@
+{
+  "name": "Booking Payment Record",
+  "description": "Gives every new booking a payment record with the deposit rules applied, whichever screen or path created it. Time blocks are skipped.",
+  "trigger": {
+    "condition": "${ .trigger.data.block_source == null and .trigger.data.status != \"blocked\" }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "BookingRequest"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "booking_payment_record",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "ensure_payment": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "ensureBookingPayment",
+            "args": {
+              "booking_request_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Create payment record",
+            "description": "Apply deposit rules to the new booking"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Product description"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Product photo URL"
+    },
+    "selling_price": {
+      "type": "number",
+      "description": "Selling price in dollars"
+    },
+    "cost_price": {
+      "type": "number",
+      "description": "Cost price in dollars (optional)"
+    },
+    "stock_quantity": {
+      "type": "number",
+      "default": 0,
+      "description": "Current stock quantity"
+    },
+    "low_stock_threshold": {
+      "type": "number",
+      "default": 5,
+      "description": "Low-stock alert threshold"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Active or inactive"
+    },
+    "suggested_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Service ids this product is suggested after"
+    },
+    "suggested_client_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Client tags that trigger this suggestion"
+    },
+    "square_item_id": {
+      "type": "string",
+      "description": "Square catalogue item id (optional)"
+    },
+    "square_variation_id": {
+      "type": "string",
+      "description": "Square variation id (optional)"
+    }
+  },
+  "required": [
+    "name",
+    "selling_price"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

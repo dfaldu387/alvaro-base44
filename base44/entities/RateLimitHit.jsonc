@@ -1,0 +1,45 @@
+{
+  "name": "RateLimitHit",
+  "type": "object",
+  "properties": {
+    "bucket": {
+      "type": "string",
+      "description": "Scope, one-way IP fingerprint, window size and window number, e.g. mapbox_geocode|a1b2c3|m|29187431. One row per caller per window, so traffic never fills the table."
+    },
+    "count": {
+      "type": "number",
+      "default": 0,
+      "description": "Requests counted in this window."
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the window has ended and the row can be removed."
+    }
+  },
+  "required": [
+    "bucket"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

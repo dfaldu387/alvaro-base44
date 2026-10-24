@@ -1,0 +1,123 @@
+{
+  "name": "Appointment",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id"
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "Linked Booking Request id"
+    },
+    "workflow_item_id": {
+      "type": "string",
+      "description": "Linked Workflow Item id"
+    },
+    "date_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Exact appointment date and time"
+    },
+    "duration_mins": {
+      "type": "number",
+      "description": "Service duration in minutes"
+    },
+    "service": {
+      "type": "string",
+      "description": "Service name"
+    },
+    "address": {
+      "type": "string",
+      "description": "Appointment address"
+    },
+    "appointment_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "completed",
+        "rescheduled",
+        "cancelled",
+        "no_show"
+      ],
+      "default": "draft",
+      "description": "Appointment status (official source for outcome)"
+    },
+    "confirmation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed"
+      ],
+      "default": "pending",
+      "description": "Client confirmation status"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "unpaid",
+        "paid"
+      ],
+      "default": "unpaid",
+      "description": "Payment status (display only \u2014 Square owns the truth)"
+    },
+    "square_payment_id": {
+      "type": "string",
+      "description": "Linked Square payment id (owned by Square)"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the appointment was completed"
+    },
+    "cancelled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the appointment was cancelled"
+    },
+    "rescheduled_from": {
+      "type": "string",
+      "description": "Previous appointment id this replaced"
+    },
+    "rescheduled_to": {
+      "type": "string",
+      "description": "New appointment id this was replaced by"
+    }
+  },
+  "required": [
+    "client_id",
+    "date_time"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

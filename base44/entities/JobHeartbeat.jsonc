@@ -1,0 +1,102 @@
+{
+  "name": "JobHeartbeat",
+  "type": "object",
+  "properties": {
+    "job_key": {
+      "type": "string",
+      "enum": [
+        "sweep",
+        "arrival",
+        "campaign",
+        "autoplace",
+        "reshuffle"
+      ],
+      "description": "Which job this row describes. One row per job, updated on every run, so an hourly job never fills the table. sweep, arrival and campaign are scheduled; autoplace (Route Flow Auto-Place) and reshuffle (Route Flow Reshuffle) run when a booking request changes, so a quiet day is not a failure for them."
+    },
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the most recent scheduled run finished."
+    },
+    "last_outcome": {
+      "type": "string",
+      "enum": [
+        "acted",
+        "no_op",
+        "failed"
+      ],
+      "description": "acted = the run did work; no_op = it ran and correctly did nothing (wrong day or hour, empty queue); failed = it hit an error."
+    },
+    "last_reason": {
+      "type": "string",
+      "description": "Plain-language reason when the run did nothing."
+    },
+    "last_detail": {
+      "type": "string",
+      "description": "Short plain-language summary of what the run did."
+    },
+    "last_acted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the job last actually did work (not a no-op)."
+    },
+    "processed": {
+      "type": "number",
+      "default": 0,
+      "description": "Items looked at on the last run."
+    },
+    "sent": {
+      "type": "number",
+      "default": 0,
+      "description": "Sweep: handed to the provider. Arrival and campaign: newly queued for sending."
+    },
+    "suppressed": {
+      "type": "number",
+      "default": 0,
+      "description": "Items deliberately not sent on the last run."
+    },
+    "failed": {
+      "type": "number",
+      "default": 0,
+      "description": "Items or steps that failed on the last run."
+    },
+    "last_error": {
+      "type": "string",
+      "description": "Safe description of the most recent error. Empty after a run that did not fail."
+    }
+  },
+  "required": [
+    "job_key"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

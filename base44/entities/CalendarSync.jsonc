@@ -1,0 +1,72 @@
+{
+  "name": "CalendarSync",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The appointment this calendar block belongs to."
+    },
+    "app_user_id": {
+      "type": "string",
+      "description": "The app user whose own Google Calendar holds the block. One block per appointment per person, so two barbers on the same booking each get their own."
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "The barber profile the appointment was finalised for."
+    },
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The service date the block was last written for (YYYY-MM-DD)."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Google Calendar event id. Its presence is what makes re-finalising a route update the existing block instead of adding a duplicate."
+    },
+    "calendar_id": {
+      "type": "string",
+      "default": "primary",
+      "description": "The Google calendar the block lives on (always the person's primary calendar)."
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the block was last written or updated."
+    }
+  },
+  "required": [
+    "booking_request_id",
+    "app_user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

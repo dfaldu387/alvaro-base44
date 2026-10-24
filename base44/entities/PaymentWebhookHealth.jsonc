@@ -1,0 +1,66 @@
+{
+  "name": "PaymentWebhookHealth",
+  "type": "object",
+  "properties": {
+    "last_event_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last signed payment-provider event arrived."
+    },
+    "last_event_type": {
+      "type": "string",
+      "description": "The type of that event, e.g. payment.updated."
+    },
+    "handled_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Events that changed a booking's payment."
+    },
+    "duplicates_ignored": {
+      "type": "number",
+      "default": 0,
+      "description": "Repeat deliveries of an event already handled, answered without changing anything."
+    },
+    "ignored_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Events deliberately not applied (already settled, not completed, unhandled type)."
+    },
+    "unmatched_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Events that could not be matched to a booking (answered 503 so the provider retries)."
+    }
+  },
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

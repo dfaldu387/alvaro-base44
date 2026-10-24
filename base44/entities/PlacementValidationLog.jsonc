@@ -1,0 +1,152 @@
+{
+  "name": "PlacementValidationLog",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "Booking request the decision was made about"
+    },
+    "booking_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Calendar date of the proposed placement (YYYY-MM-DD)"
+    },
+    "barber_id": {
+      "type": "string",
+      "description": "Barber (TeamMember id) the placement belongs to"
+    },
+    "barber_name": {
+      "type": "string",
+      "description": "Barber name (denormalised for display)"
+    },
+    "proposed_time": {
+      "type": "string",
+      "description": "Proposed appointment start time as stored e.g. 10:00am"
+    },
+    "previous_time": {
+      "type": "string",
+      "description": "The appointment time this decision replaced (null when the request held no time before it, e.g. an auto-placement from Unscheduled)."
+    },
+    "proposed_start_decimal": {
+      "type": "number",
+      "description": "Proposed start time as a decimal hour"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "auto_placement",
+        "unscheduled",
+        "skipped",
+        "fit",
+        "reshuffle",
+        "reshuffle_applied",
+        "manual",
+        "override"
+      ],
+      "description": "Structured event behind this decision. auto_placement = Route Flow placed a new request on its own; unscheduled = Route Flow finished and the request has no slot; skipped = Route Flow declined to act (inactive, incomplete data); fit = a time change made by rearranging the day to fit an unresolved request; reshuffle = a time change made by the Stage 2 optimiser; reshuffle_applied = a time change written when an admin applied a reviewed suggestion; manual = a human placed or removed an appointment; override = a human scheduled outside the customer's availability."
+    },
+    "details_json": {
+      "type": "object",
+      "description": "Expanded detail for the \"View details\" panel: evaluated/valid counts, day metrics, blocking codes. Never contains client names, addresses or contact details \u2014 only booking request ids and times."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "saved",
+        "override_saved",
+        "validated",
+        "rejected",
+        "skipped",
+        "no_valid_slot"
+      ],
+      "description": "What the engine decided: saved (valid placement written), override_saved (written under an authorised admin override), validated (checked and valid but nothing written), rejected (invalid placement, nothing written), skipped (automation declined to act), no_valid_slot (automation found no valid slot)"
+    },
+    "valid": {
+      "type": "boolean",
+      "description": "Whether the proposed placement passed the hard-constraint engine"
+    },
+    "codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Validation codes returned by the shared scheduling engine"
+    },
+    "override_used": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when an authorised admin override was explicitly used for this decision"
+    },
+    "override_reason": {
+      "type": "string",
+      "description": "The reason recorded by the admin when using an override"
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "manual_calendar",
+        "admin_panel",
+        "automation",
+        "reshuffle_apply"
+      ],
+      "description": "Which surface initiated the decision"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "route_flow"
+      ],
+      "description": "Validation source: manual scheduling or Route Flow automation"
+    },
+    "actor_name": {
+      "type": "string",
+      "description": "Name of the person who made the decision (empty for trusted automation)"
+    },
+    "actor_role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "staff",
+        "automation"
+      ],
+      "description": "Authority the decision was made under"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the decision was recorded"
+    },
+    "detail": {
+      "type": "string",
+      "description": "Short non-sensitive explanation (validation messages, skip reason). Client names, addresses and contact details are never stored here."
+    }
+  },
+  "required": [
+    "outcome",
+    "trigger"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "Route Flow Reshuffle",
+  "description": "Event-driven optimisation. When booking requests change, Route Flow assesses the day server-side: in suggest mode it stores a reshuffle suggestion for admin review, and in auto-optimise mode it rearranges Provisional appointments itself. Only Provisional appointments ever move, and only when the change saves at least 10 minutes of driving and idle time combined.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "BookingRequest",
+      "events": [
+        "create",
+        "update",
+        "delete"
+      ]
+    },
+    "condition": "${ .trigger.event_type == \"create\" or .trigger.event_type == \"delete\" or ((.trigger.changed_fields // []) | index(\"assigned_time\") != null) or ((.trigger.changed_fields // []) | index(\"schedule_status\") != null) or ((.trigger.changed_fields // []) | index(\"status\") != null) or ((.trigger.changed_fields // []) | index(\"team_member_id\") != null) or ((.trigger.changed_fields // []) | index(\"requested_date\") != null) }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "route_flow_reshuffle",
+      "version": "1.1",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "suggest_reshuffle": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "routeFlowEvaluateReshuffleV2",
+            "args": {
+              "booking_request_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "optimise_day",
+          "x-base44": {
+            "title": "Suggest reshuffle",
+            "description": "Suggest mode only \u2014 suggests, never applies"
+          }
+        }
+      },
+      {
+        "optimise_day": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "optimiseProvisionalDay",
+            "args": {
+              "booking_request_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Optimise day",
+            "description": "Auto-optimise mode only \u2014 applies 10+ minute improvements"
+          }
+        }
+      }
+    ]
+  }
+}

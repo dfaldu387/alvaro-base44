@@ -1,0 +1,72 @@
+{
+  "name": "SchedulingBotSettings",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Master toggle for Route Flow. When off, no automated scheduling runs."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "off",
+        "auto_place",
+        "suggest",
+        "auto_optimise"
+      ],
+      "default": "off",
+      "description": "Route Flow operating mode. off, auto_place and suggest are active. In suggest mode Route Flow auto-places new requests and evaluates whether provisional appointments could be arranged better \u2014 it only ever suggests, never applies. In auto_optimise mode it does the same evaluation but applies a better arrangement itself, once the change saves at least 10 minutes of driving and idle time combined."
+    },
+    "auto_place_new_requests": {
+      "type": "boolean",
+      "default": true,
+      "description": "When true, new booking requests are automatically given a provisional calendar slot (active in auto_place, suggest and auto_optimise modes)."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "off",
+        "monitoring",
+        "auto-placing",
+        "optimising"
+      ],
+      "default": "off",
+      "description": "Current Route Flow operational status (derived from enabled + mode)"
+    }
+  },
+  "required": [
+    "enabled"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "name": "MessagingSettings",
+  "type": "object",
+  "properties": {
+    "messaging_mode": {
+      "type": "string",
+      "enum": [
+        "off",
+        "allowlist",
+        "live"
+      ],
+      "default": "allowlist",
+      "description": "The safety gate for EVERY automated and manual message. off = nothing is sent to anyone; allowlist = only numbers in allowlist_numbers are sent to; live = everyone is sent to. A missing value is treated as allowlist. Changed only by the setMessagingMode function."
+    },
+    "allowlist_numbers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Australian mobile numbers that may receive messages while messaging_mode is allowlist. Compared after normalising with the shared auPhone helper, so formatting never matters."
+    },
+    "went_live_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When someone last switched messaging_mode to live."
+    },
+    "went_live_by": {
+      "type": "string",
+      "description": "Name of the person who last switched messaging_mode to live."
+    },
+    "arrival_send_hour": {
+      "type": "number",
+      "default": 18,
+      "description": "Hour of day (0-23, Australia/Sydney) from which the night-before arrival-time messages go out for tomorrow's finalised routes. The evening job may run every hour; it only acts from this hour onward, and is idempotent, so changing this needs no code change."
+    },
+    "campaign_outreach_day": {
+      "type": "string",
+      "enum": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "default": "Tuesday",
+      "description": "Regular-client reminder campaign: the weekday the rebooking reminders go out."
+    },
+    "campaign_followup_day": {
+      "type": "string",
+      "enum": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "default": "Thursday",
+      "description": "Campaign: the weekday the single follow-up goes out."
+    },
+    "campaign_run_hour": {
+      "type": "number",
+      "default": 10,
+      "description": "Campaign: hour of day (0-23, in the campaign timezone) from which a scheduled run may act. The Campaign Run workflow fires hourly and the campaignRun function decides from this value whether to act, so changing it needs no workflow edit. Messages are still held by the central quiet-hours rule (08:00-20:00 Sydney)."
+    },
+    "campaign_timezone": {
+      "type": "string",
+      "default": "Australia/Sydney",
+      "description": "Campaign: IANA timezone used for the weekday, run hour and ISO week."
+    },
+    "campaign_max_per_run": {
+      "type": "number",
+      "default": 50,
+      "description": "Campaign: most messages one run may queue. Extra eligible clients are recorded as capped."
+    },
+    "campaign_dry_run": {
+      "type": "boolean",
+      "default": true,
+      "description": "Campaign dry-run mode. ON (the default, and when this record is missing): runs only record a preview and queue nothing. Live sending also needs both campaign templates switched on."
+    },
+    "campaign_max_overdue_days": {
+      "type": "number",
+      "default": 180,
+      "description": "Campaign: a reminder date further overdue than this is treated as bad data and skipped for investigation rather than contacted."
+    },
+    "campaign_booking_link": {
+      "type": "string",
+      "description": "Campaign: the https booking link placed in the messages as {{booking_link}}."
+    },
+    "assistant_mode": {
+      "type": "string",
+      "enum": [
+        "off",
+        "draft",
+        "live"
+      ],
+      "default": "draft",
+      "description": "AI inbound assistant. off = classify and escalate only, no drafts. draft (the default, and when this field is missing) = the assistant writes a reply and it waits for a person to tap Send. live = replies to routine questions are queued automatically. Change-request acknowledgements and escalations behave the same in every mode. A separate decision from messaging_mode and campaign_dry_run; changed only by the setAssistantMode function."
+    }
+  },
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,147 @@
+{
+  "name": "WorkflowItem",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id"
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "Linked Booking Request id"
+    },
+    "recurring_setup_id": {
+      "type": "string",
+      "description": "Linked Recurring Setup id (if recurring)"
+    },
+    "workflow_week": {
+      "type": "string",
+      "description": "Week identifier e.g. 2025-W03"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "needs_reminder",
+        "waiting_on_client",
+        "time_received",
+        "confirmed"
+      ],
+      "description": "Current workflow stage"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "cancelled",
+        "skipped",
+        "expired"
+      ],
+      "default": "active",
+      "description": "Workflow item status"
+    },
+    "reminder_sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When reminder was sent"
+    },
+    "follow_up_due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Follow-up due date"
+    },
+    "availability": {
+      "type": "string",
+      "description": "Availability received from client"
+    },
+    "confirmation_status": {
+      "type": "string",
+      "enum": [
+        "waiting_confirmation",
+        "client_confirmed"
+      ],
+      "default": "waiting_confirmation",
+      "description": "Confirmation status"
+    },
+    "carried_forward": {
+      "type": "boolean",
+      "default": false,
+      "description": "Carried forward from a previous week"
+    },
+    "overdue": {
+      "type": "boolean",
+      "default": false,
+      "description": "Follow-up overdue"
+    },
+    "closed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the workflow item was closed"
+    },
+    "closed_reason": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "cancelled",
+        "could_not_fit",
+        "no_response",
+        "skipped",
+        "expired"
+      ],
+      "description": "Reason the workflow item was closed"
+    }
+  },
+  "required": [
+    "client_id",
+    "stage"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

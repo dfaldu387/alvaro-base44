@@ -1,0 +1,91 @@
+{
+  "name": "CalendarImportState",
+  "type": "object",
+  "description": "One row per app user: whether Google Calendar busy-time import is switched on, and how healthy the last syncs were. Settings and counters only. It holds no event content and no busy time (busy time is held as ordinary block rows).",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "The app user whose Google Calendar this describes."
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "The on/off switch. Off = nothing is read and the sync's own blocks are removed."
+    },
+    "include_all_day": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether all-day events count as busy. Off by default."
+    },
+    "google_account": {
+      "type": "string",
+      "description": "The connected Google account (the calendar's own address), for display."
+    },
+    "last_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a sync last started. The 15-minute automatic throttle reads this."
+    },
+    "last_success_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a sync last finished completely."
+    },
+    "stale": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the last attempt failed or was partial: the held blocks are the previous ones and may be out of date."
+    },
+    "failure_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Failed or partial syncs, in total."
+    },
+    "consecutive_failures": {
+      "type": "number",
+      "default": 0,
+      "description": "Failed or partial syncs since the last complete one."
+    },
+    "last_error": {
+      "type": "string",
+      "description": "A fixed code for the last problem (not_connected, google_unreachable, google_refused, too_many_events, partial). Never a message from Google."
+    },
+    "last_added": {
+      "type": "number",
+      "default": 0
+    },
+    "last_updated": {
+      "type": "number",
+      "default": 0
+    },
+    "last_removed": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

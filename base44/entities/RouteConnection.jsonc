@@ -1,0 +1,151 @@
+{
+  "name": "RouteConnection",
+  "type": "object",
+  "properties": {
+    "from_appointment_id": {
+      "type": "string",
+      "description": "Source appointment ID (derived from BookingRequest, e.g. db-xxx)"
+    },
+    "to_appointment_id": {
+      "type": "string",
+      "description": "Destination appointment ID (derived from BookingRequest, e.g. db-xxx)"
+    },
+    "day": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "description": "Weekday of the drive leg (display only \u2014 `date` is the scheduling source of truth)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Exact calendar date (YYYY-MM-DD) this drive leg belongs to. Drive legs are real schedule records: a leg created for one Friday must never be rendered on another Friday."
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Exact start time of the drive leg (the source appointment's occupancy end \u2014 service plus that booking's own buffer)"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "Exact end time of the drive leg (start + travel duration)"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Rounded drive duration in minutes (rounded up to nearest 5). Absent when travel could not be calculated for this pair \u2014 the leg is still recorded, so a segment never disappears silently."
+    },
+    "distance_km": {
+      "type": "number",
+      "description": "Drive distance in kilometres"
+    },
+    "gap_minutes": {
+      "type": "number",
+      "description": "The room actually free for this leg: the minutes between the first appointment's occupancy end and the next appointment's start."
+    },
+    "fits_gap": {
+      "type": "boolean",
+      "default": true,
+      "description": "False when the required drive time is longer than the room free between the two appointments. The leg is kept and shown as a travel conflict, never dropped."
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "known",
+        "unavailable"
+      ],
+      "default": "known",
+      "description": "Whether road travel for this pair could be calculated. 'unavailable' means no driving estimate was returned: the leg is shown as Travel unavailable and needs review."
+    },
+    "earliest_feasible_start": {
+      "type": "string",
+      "description": "When travel does not fit the gap: the earliest the next appointment could legally start (previous occupancy end + drive time), shown to the admin with the conflict."
+    },
+    "needs_review": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when this segment needs a person to look at it: travel could not be calculated, or it does not fit the gap between the two appointments."
+    },
+    "efficiency": {
+      "type": "string",
+      "enum": [
+        "green",
+        "yellow",
+        "red"
+      ],
+      "description": "Drive-leg rating by duration: green = 15 minutes or less, yellow = 16 to 25 minutes, red = more than 25 minutes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "current",
+        "stale"
+      ],
+      "default": "current",
+      "description": "Whether the connection needs recalculation (stale = a linked appointment moved)"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Test data flag. True when this drive leg belongs to a test-only route, so Route Flow activity created by QA is excluded from reporting and can be bulk-deleted."
+    }
+  },
+  "required": [
+    "from_appointment_id",
+    "to_appointment_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

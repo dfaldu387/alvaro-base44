@@ -1,0 +1,78 @@
+{
+  "name": "RouteExecution",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking this execution state belongs to. One row per booking."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Calendar date of the stop (YYYY-MM-DD)."
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "arrived",
+        "started",
+        "completed"
+      ],
+      "description": "Where the barber is on this stop. Stored server-side by updateRouteExecution; never written to the booking's own status."
+    },
+    "arrived_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the barber marked Arrived."
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the barber marked Start."
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the barber marked Complete."
+    },
+    "actor_name": {
+      "type": "string",
+      "description": "Who made the most recent change."
+    }
+  },
+  "required": [
+    "booking_request_id",
+    "state"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

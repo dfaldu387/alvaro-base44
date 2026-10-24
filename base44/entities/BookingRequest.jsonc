@@ -1,0 +1,554 @@
+{
+  "name": "BookingRequest",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client's name (denormalised for display)"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Client's phone number (denormalised)"
+    },
+    "email": {
+      "type": "string",
+      "description": "Client's email address (denormalised)"
+    },
+    "address": {
+      "type": "string",
+      "description": "Client's full formatted service address (from Mapbox autocomplete)"
+    },
+    "address_lat": {
+      "type": "number",
+      "description": "Selected service address latitude (from Mapbox autocomplete)"
+    },
+    "address_lng": {
+      "type": "number",
+      "description": "Selected service address longitude (from Mapbox autocomplete)"
+    },
+    "address_postcode": {
+      "type": "string",
+      "description": "Selected address postcode (structured from Mapbox)"
+    },
+    "address_suburb": {
+      "type": "string",
+      "description": "Selected address suburb/locality (structured from Mapbox)"
+    },
+    "address_state": {
+      "type": "string",
+      "description": "Selected address state (structured from Mapbox)"
+    },
+    "address_place_id": {
+      "type": "string",
+      "description": "Mapbox feature/place ID for the selected service address"
+    },
+    "booking_source": {
+      "type": "string",
+      "enum": [
+        "Recurring Reminder",
+        "Manual Booking",
+        "Independent Booking",
+        "Online Booking",
+        "Imported Booking",
+        "Assistant Booking"
+      ],
+      "description": "How the booking request originated. Assistant Booking = created by the AI assistant from a customer's text, only through the shared booking creator, only as pending, and only with a re-validated slot."
+    },
+    "requested_week": {
+      "type": "string",
+      "description": "Week identifier e.g. 2025-W03"
+    },
+    "day": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "description": "Day of week requested"
+    },
+    "requested_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The actual date selected by the customer (YYYY-MM-DD)"
+    },
+    "time_blocks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Booking periods the availability window overlaps"
+    },
+    "time_block": {
+      "type": "string",
+      "enum": [
+        "Morning",
+        "Midday",
+        "Afternoon",
+        "Evening"
+      ],
+      "description": "Primary overlapping period (legacy)"
+    },
+    "availability_window": {
+      "type": "string",
+      "description": "Client availability window e.g. 2pm-7pm or Flexible"
+    },
+    "availability_override": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the assigned time is deliberately outside the customer's submitted availability window (admin override). The original availability_window is never modified."
+    },
+    "override_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "awaiting_confirmation",
+        "confirmed"
+      ],
+      "default": "none",
+      "description": "Confirmation status for availability overrides: none (no override), awaiting_confirmation (admin moved outside availability, needs client confirmation), confirmed (client agreed to the override time)"
+    },
+    "schedule_status": {
+      "type": "string",
+      "enum": [
+        "unscheduled",
+        "provisional",
+        "locked",
+        "confirmed"
+      ],
+      "default": "unscheduled",
+      "description": "Calendar placement state \u2014 separate from booking approval status. unscheduled = no slot found / not placed; provisional = system auto-placed, movable; locked = admin fixed the time, Auto Sort must not move; confirmed = time communicated to customer, Auto Sort must never move automatically."
+    },
+    "placement_status": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "placed",
+        "unscheduled",
+        "needs_review"
+      ],
+      "description": "Route Flow placement outcome, written by the placement engine on every attempt so the request's operational state is always visible: processing = saved, Route Flow has not finished; placed = a valid slot was found; unscheduled = Route Flow finished and no valid slot fitted inside the customer's window; needs_review = placement could not be decided automatically (missing scheduling data, coverage, unverifiable travel) and an admin must look. Never hides a request: an unplaced request stays visible under Bookings \u2192 Needs Action."
+    },
+    "placement_reason": {
+      "type": "string",
+      "description": "Short admin-facing reason for the current placement_status, e.g. \"No valid slot found inside availability\", \"Availability fully occupied\", \"Travel time could not fit\", \"Outside working hours\", \"Coverage requires review\". Translated from validator / Route Flow reason codes \u2014 raw internal errors are never stored here."
+    },
+    "placement_checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When Route Flow last evaluated placement for this request. Missing means no placement attempt has completed yet (the request is still Processing)."
+    },
+    "locked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the appointment was locked (admin fixed the time)"
+    },
+    "locked_by": {
+      "type": "string",
+      "description": "Name of the admin who locked the appointment"
+    },
+    "confirmed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the appointment time was confirmed with the client"
+    },
+    "confirmed_by": {
+      "type": "string",
+      "description": "Name of the admin who confirmed the appointment time"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Flat list of all selected service/add-on names across participants (for dedup/display)"
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "primary_service": {
+            "type": "string",
+            "description": "Primary service name selected for this person (exactly one)"
+          },
+          "addons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Add-on names selected for this person"
+          }
+        }
+      },
+      "default": [],
+      "description": "Explicit list of booking participants, each with exactly one primary service and optional add-ons"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes from client"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "declined",
+        "waitlist",
+        "completed",
+        "blocked",
+        "rescheduled",
+        "no_show",
+        "could_not_fit"
+      ],
+      "default": "pending",
+      "description": "Request status (legacy \u2014 use request_outcome for final outcome)"
+    },
+    "request_outcome": {
+      "type": "string",
+      "enum": [
+        "Scheduled",
+        "Could Not Fit",
+        "No Response",
+        "Cancelled",
+        "Skipped"
+      ],
+      "description": "Final request outcome (official source for Could Not Fit)"
+    },
+    "assigned_time": {
+      "type": "string",
+      "description": "Barber-assigned appointment time"
+    },
+    "route_order": {
+      "type": "number",
+      "description": "Order in the route for the day"
+    },
+    "week_of": {
+      "type": "string",
+      "description": "Week identifier e.g. 2025-W03"
+    },
+    "duration_mins": {
+      "type": "number",
+      "description": "Total service duration in minutes"
+    },
+    "subtotal": {
+      "type": "number",
+      "description": "Pre-discount subtotal in dollars (recalculated server-side)"
+    },
+    "price": {
+      "type": "number",
+      "description": "Total booking price in dollars (recalculated server-side)"
+    },
+    "people_count": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of people in the booking (group size)"
+    },
+    "is_group_booking": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when 2+ people are booked together at the same location"
+    },
+    "group_discount": {
+      "type": "number",
+      "default": 0,
+      "description": "Group booking discount applied (dollars)"
+    },
+    "group_discount_type": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "percentage"
+      ],
+      "description": "Type of group discount applied (fixed or percentage)"
+    },
+    "group_discount_tier": {
+      "type": "string",
+      "description": "Discount tier applied e.g. 2, 3, 4+"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "Unpaid",
+        "Paid"
+      ],
+      "default": "Unpaid",
+      "description": "Payment status (display only \u2014 Square owns the truth)"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "Cash",
+        "Transfer",
+        "Card"
+      ],
+      "description": "How payment was received"
+    },
+    "after_hours_mode": {
+      "type": "string",
+      "enum": [
+        "come_to_me",
+        "mobile_callout"
+      ],
+      "description": "After-hours booking mode (Come to me / I come to you)"
+    },
+    "after_hours_slot": {
+      "type": "string",
+      "description": "Exact after-hours appointment slot e.g. 7:30pm"
+    },
+    "service_area_id": {
+      "type": "string",
+      "description": "Customer's matched Service Area from Step 1 (based on their location, for routing)"
+    },
+    "service_area_name": {
+      "type": "string",
+      "description": "Customer's matched Service Area name (denormalised for display)"
+    },
+    "service_zone_id": {
+      "type": "string",
+      "description": "Service Zone scheduled for the selected date (source of truth for the booking's zone)"
+    },
+    "service_zone_name": {
+      "type": "string",
+      "description": "Service Zone name for the selected date (denormalised for display)"
+    },
+    "service_zone_colour": {
+      "type": "string",
+      "description": "Service Zone colour snapshot (hex, for historical consistency if zone is later edited)"
+    },
+    "priority_status": {
+      "type": "string",
+      "enum": [
+        "priority",
+        "outside_priority"
+      ],
+      "default": "priority",
+      "description": "Whether the customer is inside the selected date's priority zone (priority) or outside (outside_priority)"
+    },
+    "location_tier": {
+      "type": "string",
+      "enum": [
+        "priority",
+        "extended",
+        "outer",
+        "outside"
+      ],
+      "description": "Authoritative backend-calculated service tier at time of submission (priority = inside an active Service Zone, extended = within Extended Radius of Coverage Centre, outer = within Maximum Radius, outside = beyond Maximum Radius). Frontend-provided values are never trusted."
+    },
+    "distance_from_zone_km": {
+      "type": "number",
+      "description": "Distance in kilometres from the customer's address to the nearest active service zone centre at time of submission"
+    },
+    "matched_service_zone_id": {
+      "type": "string",
+      "description": "Nearest active service zone id by distance at time of submission (spatial match, distinct from service_zone_id which is the scheduled zone for the date)"
+    },
+    "matched_service_zone_name": {
+      "type": "string",
+      "description": "Nearest active service zone name (denormalised for display)"
+    },
+    "matched_service_zone_colour": {
+      "type": "string",
+      "description": "Matched active service zone colour snapshot (hex, for historical consistency if zone is later edited)"
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Assigned team member id (derived from the Service Zone scheduled for the selected date)"
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Assigned team member name (denormalised)"
+    },
+    "closed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was closed"
+    },
+    "decline_reason": {
+      "type": "string",
+      "description": "Why an admin declined the request, chosen from the decline list (No availability, Outside service area, Customer cancelled, Duplicate request, Unable to accommodate, Other). Kept with the request as part of its history \u2014 declining never deletes a request."
+    },
+    "declined_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was declined"
+    },
+    "declined_by": {
+      "type": "string",
+      "description": "Name of the admin who declined the request"
+    },
+    "waitlist": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when this request was submitted on a waitlist (full capacity) date"
+    },
+    "capacity_status_at_submission": {
+      "type": "string",
+      "enum": [
+        "available",
+        "in_demand",
+        "limited",
+        "waitlist",
+        "closed"
+      ],
+      "description": "The customer-facing availability status of the date at submission time"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Test data flag. True when the booking was marked as a test booking (manual test flag or last name TEST). Test bookings are excluded from production reporting, demand metrics, Route Flow analytics and automated messaging, and can be bulk-deleted. Never modified on an existing real client."
+    },
+    "messaging_consent": {
+      "type": "boolean",
+      "description": "The customer's answer to the booking-form checkbox agreeing to receive booking-related messages. true = agreed, false = did not tick it. Missing on bookings made before the checkbox existed (those are not treated as a refusal). Set server-side by submitPublicBooking."
+    },
+    "messaging_consent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the customer agreed to receive booking messages (only set when messaging_consent is true)."
+    },
+    "submission_token": {
+      "type": "string",
+      "description": "Booking-session key sent by the public booking page, used only for submission idempotency. A resend of the SAME submission carries the same key and is answered with the booking that already exists; a new appointment carries a new key and is created as a new request. Empty for admin-created and imported records."
+    },
+    "phone_normalised": {
+      "type": "string",
+      "description": "The customer's phone in the standard Australian form (e.g. 0412345678), set by submitPublicBooking. Used to count requests per customer whatever formatting they typed."
+    },
+    "email_normalised": {
+      "type": "string",
+      "description": "The customer's email, trimmed and lower-cased, set by submitPublicBooking. Used to count requests per email address."
+    },
+    "submitter_ip_hash": {
+      "type": "string",
+      "description": "One-way fingerprint of the network address the request came from. The address itself is never stored. Used only for the per-connection rate limit."
+    },
+    "protection_hold": {
+      "type": "boolean",
+      "default": false,
+      "description": "True while a public request is held for a person to review because booking protection flagged it. A held request is not placed on the schedule. Cleared when an admin approves it; a declined request leaves the queue because its status changes."
+    },
+    "protection_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Plain-language reasons the request was held, e.g. \"11 requests from this number in the last hour (limit 10).\" Shown to the admin in the Needs Review queue."
+    },
+    "protection_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Machine keys for the reasons (rate_phone, rate_email, rate_ip, active_limit, many_names, far_address, repeat_declined, bad_contact, check_failed)."
+    },
+    "protection_decision": {
+      "type": "string",
+      "description": "Set to approved when an admin released a held request into the schedule."
+    },
+    "protection_reviewed_by": {
+      "type": "string",
+      "description": "Name of the admin who approved the held request."
+    },
+    "protection_reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the held request was approved."
+    },
+    "tracking_token": {
+      "type": "string",
+      "description": "Short unguessable URL-safe token (22 characters) for the customer's live tracking link. Minted when the booking is confirmed, or when the first message that carries the link is queued. Only ever valid on tracking_token_date. Never shown to anyone except through the customer's own link."
+    },
+    "google_event_id": {
+      "type": "string",
+      "description": "Only on a block row created by the Google Calendar sync: the Google event id it was made from. Nothing else about the event is stored (no title, description, location or attendees)."
+    },
+    "block_source": {
+      "type": "string",
+      "enum": [
+        "google_calendar"
+      ],
+      "description": "Marks a block row as created by the Google Calendar sync. The sync only ever creates, updates or deletes rows carrying this tag for its own user. Empty on hand-made blocks and every real booking."
+    },
+    "google_owner_user_id": {
+      "type": "string",
+      "description": "Only on a Google-sync block row: the app user whose Google Calendar it came from, so a second barber's calendar is additive and each sync only touches its own rows."
+    },
+    "assistant_conversation_id": {
+      "type": "string",
+      "description": "Set only on a booking the AI assistant created: the AssistantConversation that produced it, so a wrong booking can be traced to the message that caused it."
+    },
+    "assistant_promised_time": {
+      "type": "string",
+      "description": "Set only on an assistant booking: the exact time the customer was told. Written in the same create as the booking and never edited, so it can always be compared with assigned_time to show the time never moved silently."
+    },
+    "tracking_token_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The service date (YYYY-MM-DD) the tracking_token was minted for. The link only works when this equals the booking's requested_date and that date is today in Sydney; if the booking moves date, a new token is minted."
+    }
+  },
+  "required": [
+    "client_name",
+    "day"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

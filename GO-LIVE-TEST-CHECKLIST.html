@@ -1,0 +1,322 @@
+<title>CUT DELUXE Go-Live Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: single column, sticky progress header, day-grouped checklist cards. Violet brand on near-black/paper. */
+  :root{
+    --bg:#f6f5f8; --surface:#ffffff; --surface-2:#f0eef4; --line:#e4e0ec;
+    --fg:#171320; --muted:#6b6478; --faint:#9b94a8;
+    --accent:#7c3aed; --accent-soft:#efe8fe; --accent-ink:#5b21b6;
+    --blocker:#dc2626; --blocker-soft:#fdecec;
+    --important:#d97706; --important-soft:#fdf2e3;
+    --done:#16a34a; --done-soft:#e8f6ed;
+    --shadow:0 1px 2px rgba(23,19,32,.05),0 8px 24px rgba(23,19,32,.05);
+    --r:14px;
+    --f-display:"Sora",system-ui,sans-serif;
+    --f-body:"Manrope",system-ui,sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0f0d15; --surface:#17141f; --surface-2:#1f1b29; --line:#2b2538;
+    --fg:#efecf5; --muted:#a79fb8; --faint:#776e8a;
+    --accent:#a78bfa; --accent-soft:#241a3d; --accent-ink:#c4b5fd;
+    --blocker:#f87171; --blocker-soft:#361a1d;
+    --important:#fbbf24; --important-soft:#352713;
+    --done:#4ade80; --done-soft:#14321f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0f0d15; --surface:#17141f; --surface-2:#1f1b29; --line:#2b2538;
+    --fg:#efecf5; --muted:#a79fb8; --faint:#776e8a;
+    --accent:#a78bfa; --accent-soft:#241a3d; --accent-ink:#c4b5fd;
+    --blocker:#f87171; --blocker-soft:#361a1d;
+    --important:#fbbf24; --important-soft:#352713;
+    --done:#4ade80; --done-soft:#14321f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.5;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--surface)}
+  .wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+  /* Header */
+  header{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--surface);border-bottom:1px solid var(--line)}
+  .head-inner{padding-block:14px}
+  .eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 2px}
+  h1{font-family:var(--f-display);font-weight:700;font-size:clamp(20px,5vw,27px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:8px;font-size:12.5px;color:var(--muted)}
+  .meta b{color:var(--fg);font-weight:600}
+  .pill-date{font-family:var(--f-mono);font-size:11.5px;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+  .bar{margin-top:12px;height:9px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+  .bar>i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-ink));transition:width .35s ease}
+  .bar-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:7px;gap:10px}
+  .bar-row .count{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+  .bar-row .pct{font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--fg);font-variant-numeric:tabular-nums}
+
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
+  .seg button{font-family:var(--f-body);font-weight:600;font-size:12.5px;color:var(--muted);background:transparent;border:0;padding:7px 12px;border-radius:8px;cursor:pointer;min-height:38px}
+  .seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+  .ghost{margin-left:auto;font-family:var(--f-body);font-weight:600;font-size:12.5px;color:var(--muted);background:transparent;border:1px solid var(--line);padding:7px 13px;border-radius:9px;cursor:pointer;min-height:38px}
+  .ghost:hover{color:var(--fg);border-color:var(--faint)}
+  .reset-confirm{color:var(--blocker);border-color:var(--blocker)}
+
+  main{padding-block:10px 40px}
+
+  /* Section */
+  section{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-top:14px;overflow:hidden}
+  .sec-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--surface)}
+  .sec-tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);padding:4px 8px;border-radius:7px;white-space:nowrap;font-weight:600}
+  .sec-titles{min-width:0;flex:1}
+  .sec-titles h2{font-family:var(--f-display);font-weight:600;font-size:15.5px;margin:0;letter-spacing:-.01em}
+  .sec-titles .date{font-size:12px;color:var(--faint);font-family:var(--f-mono);margin-top:1px}
+  .sec-prog{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .sec-prog.complete{color:var(--done)}
+
+  ul{list-style:none;margin:0;padding:6px}
+  li.item{display:flex;gap:12px;padding:11px 10px;border-radius:10px;align-items:flex-start}
+  li.item + li.item{border-top:1px solid var(--line)}
+  li.item:hover{background:var(--surface-2)}
+  .cbx{position:relative;flex:0 0 auto;margin-top:1px}
+  .cbx input{position:absolute;opacity:0;width:22px;height:22px;margin:0;cursor:pointer}
+  .box{width:22px;height:22px;border:2px solid var(--faint);border-radius:7px;display:grid;place-items:center;transition:all .15s;background:var(--surface)}
+  .cbx input:hover + .box{border-color:var(--accent)}
+  .cbx input:focus-visible + .box{outline:2px solid var(--accent);outline-offset:2px}
+  .cbx input:checked + .box{background:var(--accent);border-color:var(--accent)}
+  .box svg{width:14px;height:14px;stroke:#fff;stroke-width:3.2;fill:none;opacity:0;transition:opacity .15s}
+  .cbx input:checked + .box svg{opacity:1}
+
+  .body{min-width:0;flex:1}
+  .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .txt{font-weight:600;font-size:14px;color:var(--fg)}
+  .prio{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:6px;font-weight:600;white-space:nowrap}
+  .prio.blocker{color:var(--blocker);background:var(--blocker-soft)}
+  .prio.important{color:var(--important);background:var(--important-soft)}
+  .prio.nice{color:var(--muted);background:var(--surface-2)}
+  .pass{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .pass b{color:var(--fg);font-weight:600}
+  .where{display:inline-block;font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-top:4px}
+  li.done .txt{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--faint)}
+  li.done .pass,li.done .where{opacity:.6}
+
+  .note{font-size:12.5px;color:var(--muted);padding:12px 16px;background:var(--surface-2);border-top:1px solid var(--line)}
+  .note b{color:var(--fg)}
+  footer{color:var(--faint);font-size:12px;text-align:center;padding:26px 0 8px;line-height:1.7}
+  footer code{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header>
+  <div class="wrap head-inner">
+    <p class="eyebrow">CUT DELUXE · Mobile Barbering</p>
+    <h1>Go-Live Test Checklist</h1>
+    <div class="meta">
+      <span class="pill-date" id="countdown">Go-live Sat 31 Oct</span>
+      <span>Branch <b>go-live-dev</b></span>
+      <span>Tested before merge to <b>main</b></span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="bar-row">
+      <span class="count" id="barCount">0 / 0 checks</span>
+      <span class="pct" id="barPct">0%</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Filter checks">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="blocker">Blockers</button>
+        <button data-filter="open">Unchecked</button>
+      </div>
+      <button class="ghost" id="resetBtn">Reset</button>
+    </div>
+    <div id="list"></div>
+    <footer>
+      Progress is saved on this device only. Share the link; each person tracks their own.<br>
+      Full plan & reversible-pause notes: <code>BACKUP-MANIFEST.md</code> · <code>GO-LIVE-TEST-CHECKLIST.md</code>
+    </footer>
+  </div>
+</main>
+
+<script>
+const SECTIONS = [
+  { tag:"Day 1", title:"Take over & lock down", date:"Fri 23 Oct · done", items:[
+    {id:"d1a",txt:"Back up the current version",pass:"Baseline checkpoint restores code + schema + functions",where:"checkpoint 6adb1f7e",prio:"blocker",done:true},
+    {id:"d1b",txt:"Agree one editing workflow",pass:"All work on go-live-dev; main untouched",where:"branch go-live-dev",prio:"blocker",done:true},
+    {id:"d1c",txt:"Pause non-essential modules (campaigns, team, group)",pass:"Hidden/stopped on branch; build + 583 tests pass",where:"go-live-dev",prio:"important",done:true},
+    {id:"d1d",txt:"Write the go-live test checklist",pass:"This checklist",where:"this page",prio:"important",done:true},
+    {id:"d1e",txt:"Export the database (data snapshot)",pass:"901 records across 54 entities exported off-platform",where:"Downloads backup",prio:"nice",done:true},
+  ]},
+  { tag:"Day 2–3", title:"Operations, end to end", date:"Sat 24 – Sun 25 Oct", items:[
+    {id:"a1",txt:"A website booking request appears in the calendar",pass:"Submitted on /book → shows in calendar requests drawer",where:"Book → Schedule",prio:"blocker"},
+    {id:"a2",txt:"Approving a request places it on the calendar",pass:"Correct day/time, client + service attached",where:"Requests / Schedule",prio:"blocker"},
+    {id:"a3",txt:"Undated / unusual requests are handled, not lost",pass:"A no-date request stays visible and actionable",where:"Schedule",prio:"important"},
+    {id:"b1",txt:"Connect bunches the day using real drive times",pass:"Appointments pull into an efficient order; drive times are real",where:"Schedule + Route Flow",prio:"blocker"},
+    {id:"b2",txt:"Every unavoidable gap explains itself",pass:"Each idle gap shows a reason; none unexplained",where:"Route Flow",prio:"blocker"},
+    {id:"b3",txt:"Overrides & confirmation flags behave",pass:"Manual overrides survive a re-run; confirmed appts don't move",where:"Schedule",prio:"important"},
+    {id:"b4",txt:"Conflicts resolve sanely",pass:"Double-books / impossible travel are flagged, not booked over",where:"Schedule",prio:"important"},
+    {id:"c1",txt:"Confirm sends each client a text with their time",pass:"Each test number gets one text with the right time",where:"Schedule → Confirm",prio:"blocker"},
+    {id:"c2",txt:"The message is accurate (no wrong time/price)",pass:"Time/price in the text matches the booking exactly",where:"Messages",prio:"blocker"},
+  ]},
+  { tag:"Day 4", title:"Daily Route screen (on a phone)", date:"Mon 26 Oct", items:[
+    {id:"g1",txt:"Appointments in the correct order on a phone screen",pass:"Route list ordered as Connect planned it",where:"Route",prio:"blocker"},
+    {id:"g2",txt:"Navigation works",pass:"Tap opens maps to the stop's address",where:"Route",prio:"blocker"},
+    {id:"g3",txt:"Client details reachable from the stop",pass:"Name, phone, service visible per stop",where:"Route",prio:"important"},
+    {id:"g4",txt:"Checkout works from the route stop",pass:"Can complete / take payment at the stop",where:"Route",prio:"blocker"},
+    {id:"g5",txt:"Background location function errors FIXED",pass:"No errors from the live-location function",where:"liveLocation",prio:"blocker"},
+  ]},
+  { tag:"Day 5", title:"SMS go-live", date:"Tue 27 Oct", items:[
+    {id:"e1",txt:"Texting switched test → live",pass:"Messaging mode LIVE; a real text reaches a real handset",where:"Settings / secrets",prio:"blocker"},
+    {id:"e2",txt:"Replies captured",pass:"A client reply appears in Messages",where:"Messages",prio:"important"},
+    {id:"e3",txt:"Message history on the client profile",pass:"Each profile shows sent/received messages",where:"Clients → profile",prio:"important"},
+    {id:"d1",txt:"Reminders go out automatically before appointments",pass:"A reminder fires at the configured lead time, no manual action",where:"Reminders / Automation",prio:"blocker"},
+    {id:"d2",txt:"No duplicate / runaway sends",pass:"Exactly one reminder per appointment; no loops",where:"Automation",prio:"blocker"},
+  ]},
+  { tag:"Day 6", title:"Deposits & checkout", date:"Wed 28 Oct", items:[
+    {id:"f1",txt:"One real deposit taken end-to-end",pass:"Client-approved small deposit succeeds; booking shows paid",where:"Payments / Deposit Rules",prio:"blocker"},
+    {id:"f2",txt:"One real refund issued end-to-end",pass:"Refund completes; booking + reports reflect it",where:"Payments",prio:"blocker"},
+    {id:"f3",txt:"Payment status correct on booking AND in reports",pass:"Status matches in both places",where:"Reports",prio:"blocker"},
+    {id:"f4",txt:"Test data never triggers a real charge",pass:"Test bookings can't hit the live payment path",where:"testDataNeverPaysReal",prio:"blocker"},
+  ]},
+  { tag:"Day 7", title:"Phone app & clean-up", date:"Thu 29 Oct", items:[
+    {id:"h1",txt:"Admin app installed on the phone home screen",pass:"Added to Home Screen (PWA)",where:"device",prio:"blocker"},
+    {id:"h2",txt:"Secure login works from the installed app",pass:"Login succeeds from the home-screen app",where:"device",prio:"blocker"},
+    {id:"h3",txt:"The whole day can be run from the phone",pass:"Calendar → route → confirm → checkout all usable on phone",where:"device",prio:"blocker"},
+    {id:"i1",txt:"Test bookings / demo data cleared",pass:"Real setup no longer mixed with test data",where:"data",prio:"blocker"},
+    {id:"i2",txt:"Real services, prices, durations confirmed",pass:"Services list matches Alvaro's final list",where:"Services",prio:"blocker"},
+    {id:"i3",txt:"Real deposit rules confirmed",pass:"Deposit rules match the agreed policy",where:"Deposit Rules",prio:"important"},
+    {id:"i4",txt:"Real service areas confirmed",pass:"Coverage zones match where Alvaro works",where:"Service Coverage",prio:"blocker"},
+    {id:"i5",txt:"Non-essential modules paused",pass:"Campaigns / team / group paused for go-live",where:"go-live-dev",prio:"nice",done:true},
+  ]},
+  { tag:"Day 8", title:"Full dress rehearsal", date:"Fri 30 Oct · ~60 min with Alvaro", items:[
+    {id:"j1",txt:"Run one complete working day on the system",pass:"Start to finish, as a real day",where:"whole app",prio:"blocker"},
+    {id:"j2",txt:"Everything that fails is fixed the same day",pass:"No open blocker left overnight",where:"—",prio:"blocker"},
+  ]},
+  { tag:"The 31st", title:"Definition of Done — must ALL be true", date:"Sat 31 Oct · go-live", items:[
+    {id:"dod1",txt:"Website booking appears in the calendar",pass:"",where:"",prio:"blocker"},
+    {id:"dod2",txt:"Connect bunches the day with real drive times; every gap shows its reason",pass:"",where:"",prio:"blocker"},
+    {id:"dod3",txt:"Confirm sends each client a real text with their time",pass:"",where:"",prio:"blocker"},
+    {id:"dod4",txt:"Reminders go out automatically before appointments",pass:"",where:"",prio:"blocker"},
+    {id:"dod5",txt:"A deposit can be taken and refunded",pass:"",where:"",prio:"blocker"},
+    {id:"dod6",txt:"The whole day runs from the phone app",pass:"",where:"",prio:"blocker"},
+    {id:"dod7",txt:"One full day already run on it before launch",pass:"",where:"",prio:"blocker"},
+  ]},
+  { tag:"From Alvaro", title:"Needed from the client", date:"Blocks testing until provided", items:[
+    {id:"cl1",txt:"Final services, prices, durations, service areas",pass:"",where:"",prio:"blocker"},
+    {id:"cl2",txt:"2–3 phone numbers for test texts",pass:"",where:"",prio:"blocker"},
+    {id:"cl3",txt:"Approval for one small real deposit + refund",pass:"",where:"",prio:"blocker"},
+    {id:"cl4",txt:"~60 minutes on Fri 30 Oct for the dress rehearsal",pass:"",where:"",prio:"important"},
+  ]},
+];
+
+const KEY="cutdeluxe_golive_checks_v1";
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){state={};}
+// seed defaults (already-done items) only when the viewer has no stored value for them
+SECTIONS.forEach(s=>s.items.forEach(it=>{ if(it.done && !(it.id in state)) state[it.id]=true; }));
+
+let filter="all";
+const CHECK_SVG='<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){} }
+
+function render(){
+  const list=document.getElementById("list");
+  list.innerHTML="";
+  SECTIONS.forEach((sec,si)=>{
+    const total=sec.items.length;
+    const done=sec.items.filter(it=>state[it.id]).length;
+    const visible=sec.items.filter(it=>{
+      if(filter==="blocker") return it.prio==="blocker";
+      if(filter==="open") return !state[it.id];
+      return true;
+    });
+    if(visible.length===0) return;
+    const el=document.createElement("section");
+    const complete=done===total;
+    el.innerHTML=`
+      <div class="sec-head">
+        <span class="sec-tag">${sec.tag}</span>
+        <div class="sec-titles"><h2>${sec.title}</h2><div class="date">${sec.date}</div></div>
+        <div class="sec-prog${complete?' complete':''}">${done}/${total}${complete?' ✓':''}</div>
+      </div>
+      <ul></ul>`;
+    const ul=el.querySelector("ul");
+    visible.forEach(it=>{
+      const li=document.createElement("li");
+      li.className="item"+(state[it.id]?" done":"");
+      const passHtml=it.pass?`<div class="pass"><b>Pass =</b> ${it.pass}</div>`:"";
+      const whereHtml=it.where?`<span class="where">${it.where}</span>`:"";
+      li.innerHTML=`
+        <label class="cbx">
+          <input type="checkbox" id="${it.id}" ${state[it.id]?"checked":""} aria-label="${it.txt.replace(/"/g,'&quot;')}">
+          <span class="box">${CHECK_SVG}</span>
+        </label>
+        <div class="body">
+          <div class="row1"><span class="txt">${it.txt}</span><span class="prio ${it.prio}">${it.prio}</span></div>
+          ${passHtml}${whereHtml}
+        </div>`;
+      li.querySelector("input").addEventListener("change",e=>{
+        state[it.id]=e.target.checked; save(); render(); updateBar();
+      });
+      ul.appendChild(li);
+    });
+    list.appendChild(el);
+  });
+  updateBar();
+}
+
+function updateBar(){
+  const all=SECTIONS.flatMap(s=>s.items);
+  const total=all.length;
+  const done=all.filter(it=>state[it.id]).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById("barFill").style.width=pct+"%";
+  document.getElementById("barPct").textContent=pct+"%";
+  document.getElementById("barCount").textContent=done+" / "+total+" checks";
+}
+
+// Countdown to go-live (31 Oct 2026)
+(function(){
+  const go=new Date(2026,9,31);
+  const now=new Date();
+  const days=Math.ceil((go-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/864e5);
+  const el=document.getElementById("countdown");
+  if(days>1) el.textContent=days+" days to go-live · Sat 31 Oct";
+  else if(days===1) el.textContent="Go-live tomorrow · Sat 31 Oct";
+  else if(days===0) el.textContent="Go-live today · Sat 31 Oct";
+  else el.textContent="Live since Sat 31 Oct";
+})();
+
+// Filters
+document.querySelectorAll(".seg button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    filter=b.dataset.filter;
+    document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    render();
+  });
+});
+
+// Reset (two-step, since confirm() is unavailable)
+const resetBtn=document.getElementById("resetBtn");
+let armed=false, armTimer=null;
+resetBtn.addEventListener("click",()=>{
+  if(!armed){
+    armed=true; resetBtn.textContent="Tap again to clear all"; resetBtn.classList.add("reset-confirm");
+    armTimer=setTimeout(()=>{armed=false;resetBtn.textContent="Reset";resetBtn.classList.remove("reset-confirm");},3000);
+    return;
+  }
+  clearTimeout(armTimer); armed=false; resetBtn.textContent="Reset"; resetBtn.classList.remove("reset-confirm");
+  state={}; SECTIONS.forEach(s=>s.items.forEach(it=>{ if(it.done) state[it.id]=true; }));
+  save(); render();
+});
+
+render();
+</script>

@@ -1,0 +1,47 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "Australia/Sydney",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Campaign Run",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "campaign_run",
+      "version": "1.1",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_campaign": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "campaignRun",
+            "args": {
+              "stage": "auto"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run reminder campaign",
+            "description": "Acts only on the saved day and hour"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Hourly, runs the regular-client reminder campaign. The campaignRun function reads the saved outreach day, follow-up day and run hour and only acts at the right time, so changing them needs no edit here."
+}

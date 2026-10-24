@@ -1,0 +1,235 @@
+{
+  "name": "AssistantEvent",
+  "type": "object",
+  "properties": {
+    "provider_message_id": {
+      "type": "string",
+      "description": "Twilio MessageSid of the inbound message. One event per inbound message: a webhook retry finds the existing event, so there is at most one assistant reply per inbound."
+    },
+    "from_phone": {
+      "type": "string",
+      "description": "The sender's number in standard Australian form. Used only for the per-number daily cap and burst checks."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The matched client, if any."
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking the message was about (read-only link; the assistant never writes to a booking)."
+    },
+    "inbound_text": {
+      "type": "string",
+      "description": "The customer's message, exactly as received."
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the message arrived."
+    },
+    "assistant_mode": {
+      "type": "string",
+      "enum": [
+        "off",
+        "draft",
+        "live"
+      ],
+      "description": "The assistant_mode in force when the message was handled."
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "answerable",
+        "change_request",
+        "escalate",
+        "none"
+      ],
+      "default": "none",
+      "description": "What the message was classified as. none = never classified (skipped or stopped before the model)."
+    },
+    "confidence": {
+      "type": "number",
+      "description": "The classifier's confidence, 0 to 1."
+    },
+    "request_type": {
+      "type": "string",
+      "description": "For change requests: time, date, service, address or other."
+    },
+    "classifier_reason": {
+      "type": "string",
+      "description": "The classifier's one-line reason."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "processing",
+        "escalated",
+        "drafted",
+        "queued",
+        "acknowledged",
+        "stopped",
+        "skipped"
+      ],
+      "default": "processing",
+      "description": "processing = in flight; escalated = left for Alvaro, customer sent nothing; drafted = a reply waits for a tap; queued = an answerable reply was queued automatically (live mode); acknowledged = a change request was recorded and a fixed acknowledgement queued; stopped = the guard discarded a draft; skipped = the assistant deliberately did nothing (own number, system text, opted out, test data)."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Plain-language reason for the outcome, shown to Alvaro."
+    },
+    "context_pack": {
+      "type": "object",
+      "description": "The exact facts the model was given. Contains no phone number, street address, route, other customer or test data."
+    },
+    "draft_text": {
+      "type": "string",
+      "description": "The reply the assistant wrote (or the fixed acknowledgement)."
+    },
+    "draft_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "sent",
+        "discarded"
+      ],
+      "default": "none",
+      "description": "pending = waiting for Alvaro's tap; sent = queued to the customer; discarded = thrown away by the guard or by Alvaro."
+    },
+    "guard_fired": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the hard guard discarded a draft."
+    },
+    "guard_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Why the guard fired, in plain language."
+    },
+    "sent_by": {
+      "type": "string",
+      "description": "Who caused the reply to be queued: 'assistant' for automatic sends, otherwise the name of the person who tapped Send."
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the reply was queued."
+    },
+    "send_kind": {
+      "type": "string",
+      "enum": [
+        "automated",
+        "manual"
+      ],
+      "description": "Whether the queued reply is automated or manual (matches Message.manual_or_automated)."
+    },
+    "outbox_id": {
+      "type": "string",
+      "description": "The MessageOutbox row for the queued reply."
+    },
+    "reply_flag_id": {
+      "type": "string",
+      "description": "For change requests: the BookingReplyFlag (needs attention) record created."
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "The AssistantConversation this message belongs to (booking conversations only)."
+    },
+    "allowed_minutes": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [],
+      "description": "Booking conversations: the minutes-of-day of the slots the engine returned for this message. The guard allows exactly these times when the draft is checked, including when Alvaro taps Send later."
+    },
+    "allowed_weekdays": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Booking conversations: lower-case weekday names of the offered dates, allowed by the guard for this message only."
+    },
+    "inbox_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "open",
+        "resolved"
+      ],
+      "default": "none",
+      "description": "open = Alvaro needs to look (escalation, change request or draft waiting). Drives the Messages inbox and the sidebar count."
+    },
+    "resolved_by": {
+      "type": "string",
+      "description": "Who closed the item."
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was closed."
+    },
+    "llm_calls": {
+      "type": "number",
+      "default": 0,
+      "description": "Model calls made for this message."
+    },
+    "est_tokens_in": {
+      "type": "number",
+      "default": 0,
+      "description": "Estimated prompt tokens (about 4 characters each; the integration does not report real usage)."
+    },
+    "est_tokens_out": {
+      "type": "number",
+      "default": 0,
+      "description": "Estimated reply tokens."
+    }
+  },
+  "required": [
+    "provider_message_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

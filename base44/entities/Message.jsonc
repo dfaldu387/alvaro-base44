@@ -1,0 +1,129 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id"
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "Linked Booking Request id (where relevant)"
+    },
+    "workflow_item_id": {
+      "type": "string",
+      "description": "Linked Workflow Item id (where relevant)"
+    },
+    "appointment_id": {
+      "type": "string",
+      "description": "Linked Appointment id (where relevant)"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "incoming",
+        "outgoing"
+      ],
+      "description": "Message direction"
+    },
+    "message_text": {
+      "type": "string",
+      "description": "Message body"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "sms",
+        "email",
+        "whatsapp",
+        "system"
+      ],
+      "description": "Message channel"
+    },
+    "manual_or_automated": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "automated"
+      ],
+      "default": "manual",
+      "description": "Whether the message was manual or automated"
+    },
+    "delivery_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "sent",
+        "delivered",
+        "failed",
+        "received",
+        "read"
+      ],
+      "description": "Delivery status"
+    },
+    "sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the message was sent"
+    },
+    "received_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When an incoming message was received"
+    },
+    "simulated": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the message was produced by the test-double sender. It was NOT delivered to anyone."
+    },
+    "outbox_id": {
+      "type": "string",
+      "description": "MessageOutbox record that produced this message. Used so a retried item can never create a second Message."
+    },
+    "provider_message_id": {
+      "type": "string",
+      "description": "The provider's message id (Twilio SID). The delivery-status webhook finds this Message by it."
+    },
+    "delivery_error": {
+      "type": "string",
+      "description": "Provider error code reported when delivery failed (set by the delivery-status webhook)."
+    }
+  },
+  "required": [
+    "client_id",
+    "direction",
+    "message_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

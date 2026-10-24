@@ -1,0 +1,222 @@
+{
+  "name": "BookingPayment",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking this payment record belongs to. One row per booking."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Linked client id"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for test bookings; excluded from revenue."
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "not_required",
+        "deposit_due",
+        "deposit_paid",
+        "balance_due",
+        "paid_in_full",
+        "refund_pending",
+        "refunded",
+        "partially_refunded",
+        "written_off"
+      ],
+      "default": "not_required",
+      "description": "Payment state. Changed only by the paymentAction server function or a verified provider webhook, always through the payment state machine. Mirrors what the provider confirms; where they disagree, the provider wins."
+    },
+    "total_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Booking total in dollars."
+    },
+    "deposit_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Deposit asked for in dollars (0 when none)."
+    },
+    "amount_paid": {
+      "type": "number",
+      "default": 0,
+      "description": "Dollars received so far."
+    },
+    "amount_refunded": {
+      "type": "number",
+      "default": 0,
+      "description": "Dollars refunded so far."
+    },
+    "currency": {
+      "type": "string",
+      "default": "AUD",
+      "description": "Currency code."
+    },
+    "payment_provider": {
+      "type": "string",
+      "description": "Provider handling the link: 'test_double' (simulated) or 'square'."
+    },
+    "provider_payment_id": {
+      "type": "string",
+      "description": "The provider's id for the payment. With Square this is the order id while the link is unpaid (what its events echo), replaced by the real payment id once the payment completes."
+    },
+    "replaced_provider_payment_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Provider ids this record used to hold, kept when a new payment link replaced them so a late event for an older link can still be traced to this booking. Never read to change a payment: a reference only."
+    },
+    "payment_link_url": {
+      "type": "string",
+      "description": "Payment link. A test-double link is never a real payment."
+    },
+    "payment_link_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the link stops working."
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "How the last payment was received (Cash, Transfer, Card, or Provider)."
+    },
+    "rule_fired": {
+      "type": "string",
+      "description": "Machine keys of the deposit rules that fired, comma separated (new_client, after_hours, group, no_shows)."
+    },
+    "deposit_reason": {
+      "type": "string",
+      "description": "Plain-language reason a deposit was asked for."
+    },
+    "deposit_waived": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when an admin waived the deposit."
+    },
+    "waive_reason": {
+      "type": "string",
+      "description": "Reason the admin gave for waiving the deposit."
+    },
+    "waived_by": {
+      "type": "string",
+      "description": "Who waived the deposit."
+    },
+    "waived_amount": {
+      "type": "number",
+      "description": "The deposit amount that was waived."
+    },
+    "is_simulated": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when any money movement here came from the test double, not a real provider."
+    },
+    "provider_refund_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Provider refund ids already recorded on this booking, so a later provider event for the same refund is recognised rather than counted again. An idempotency marker, not a ledger."
+    },
+    "last_provider_event_id": {
+      "type": "string",
+      "description": "Id of the last verified provider event that changed this record (set in the same write as the change)."
+    },
+    "updated_by": {
+      "type": "string",
+      "description": "Who made the most recent change."
+    },
+    "op_seq": {
+      "type": "number",
+      "default": 0,
+      "description": "How many provider operations (a payment link, a refund) have been claimed on this record. The page sends the value it was looking at; a request carrying an older value is a repeat of something already handled and is refused. Also the last part of the key sent to Square, so the same operation always carries the same key."
+    },
+    "intent_key": {
+      "type": "string",
+      "description": "Set while a provider operation is claimed and not yet settled: the key sent to Square for it. Written BEFORE Square is called, by a write that only succeeds if nobody else holds a claim and the payment is unchanged. Empty when nothing is in flight."
+    },
+    "intent_kind": {
+      "type": "string",
+      "description": "What the claimed operation is: link or refund."
+    },
+    "intent_params": {
+      "type": "string",
+      "description": "The money-affecting parameters of the claimed operation (JSON), so a retry of the same request is recognised as the same intention."
+    },
+    "intent_status": {
+      "type": "string",
+      "description": "in_flight while Square is being asked; unknown when Square did not give a clear answer (the same request may then be retried and carries the same key)."
+    },
+    "intent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the operation was claimed. Used only to recover from a run that stopped part-way, never to tell one request from another."
+    },
+    "intent_claim": {
+      "type": "string",
+      "description": "An ownership marker written with the claim, so the request that made it can confirm the claim is its own."
+    },
+    "payment_link_amount": {
+      "type": "number",
+      "description": "The dollar amount the current payment link was made for. A link is only reused for a text when this still equals what is owing."
+    },
+    "needs_attention": {
+      "type": "boolean",
+      "default": false,
+      "description": "True while a person has to act because the customer could not be asked for money (the payment link could not be made or texted). Not a payment state: only paymentState.ts decides states."
+    },
+    "attention_reason": {
+      "type": "string",
+      "description": "Plain-language reason shown to the admin while needs_attention is true."
+    },
+    "attention_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the attention flag was raised."
+    },
+    "write_token": {
+      "type": "string",
+      "description": "Ownership marker written with an offline payment, so the request that recorded it can confirm the write was its own and a double tap is recorded once."
+    }
+  },
+  "required": [
+    "booking_request_id",
+    "state"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

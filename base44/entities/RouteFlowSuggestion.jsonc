@@ -1,0 +1,194 @@
+{
+  "name": "RouteFlowSuggestion",
+  "type": "object",
+  "properties": {
+    "day_of_week": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "description": "The weekday Route Flow evaluated (display only \u2014 `suggestion_date` is the scheduling source of truth)"
+    },
+    "suggestion_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Exact calendar date (YYYY-MM-DD) this suggestion applies to. Suggestions are date-bound: two different Fridays are two separate suggestions."
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Barber this suggestion applies to (empty = business default)"
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Barber name (denormalised for display)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "applied",
+        "dismissed",
+        "superseded"
+      ],
+      "default": "pending",
+      "description": "Suggestion lifecycle. pending = awaiting admin review; applied = admin applied the changes; dismissed = admin dismissed it; superseded = a newer evaluation replaced it."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Fingerprint of the proposed changes, used to avoid re-showing an identical suggestion after it was dismissed"
+    },
+    "current": {
+      "type": "object",
+      "properties": {
+        "total_drive_minutes": {
+          "type": "number"
+        },
+        "total_idle_minutes": {
+          "type": "number"
+        },
+        "scheduled_count": {
+          "type": "number"
+        }
+      },
+      "description": "Metrics for the day exactly as it currently stands"
+    },
+    "proposed": {
+      "type": "object",
+      "properties": {
+        "total_drive_minutes": {
+          "type": "number"
+        },
+        "total_idle_minutes": {
+          "type": "number"
+        },
+        "scheduled_count": {
+          "type": "number"
+        }
+      },
+      "description": "Metrics for the suggested arrangement"
+    },
+    "improvement": {
+      "type": "object",
+      "properties": {
+        "drive_minutes_saved": {
+          "type": "number"
+        },
+        "idle_minutes_saved": {
+          "type": "number"
+        },
+        "additional_bookings_fit": {
+          "type": "number"
+        }
+      },
+      "description": "What the suggestion improves"
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "booking_request_id": {
+            "type": "string"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "from_label": {
+            "type": "string"
+          },
+          "to_label": {
+            "type": "string"
+          },
+          "moving": {
+            "type": "boolean"
+          },
+          "protected": {
+            "type": "boolean"
+          },
+          "anchor_reason": {
+            "type": "string"
+          },
+          "duration_mins": {
+            "type": "number"
+          },
+          "is_new": {
+            "type": "boolean"
+          }
+        }
+      },
+      "default": [],
+      "description": "Per-appointment before/after rows shown in the preview"
+    },
+    "provisional_moved_count": {
+      "type": "number",
+      "description": "How many provisional appointments the suggestion would move"
+    },
+    "protected_count": {
+      "type": "number",
+      "description": "How many protected (locked / confirmed) appointments are untouched in this suggestion"
+    },
+    "applied_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the suggestion was applied"
+    },
+    "applied_by": {
+      "type": "string",
+      "description": "Name of the admin who applied it"
+    },
+    "applied_summary": {
+      "type": "string",
+      "description": "Short summary of what was applied"
+    }
+  },
+  "required": [
+    "day_of_week",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

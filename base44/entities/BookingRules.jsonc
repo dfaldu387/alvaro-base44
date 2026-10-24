@@ -1,0 +1,124 @@
+{
+  "name": "BookingRules",
+  "type": "object",
+  "properties": {
+    "minimum_notice_hours": {
+      "type": "number",
+      "default": 24,
+      "description": "Booking Window \u2014 how soon before an appointment a booking may be made, in hours. 24 = one day's notice, 0 = same-day bookings allowed. Single source of truth read by public booking, Route Flow and manual calendar validation."
+    },
+    "maximum_booking_days": {
+      "type": "number",
+      "default": 30,
+      "description": "Booking Window \u2014 how far ahead a booking may be made, in days. Single source of truth read by public booking, Route Flow and manual calendar validation."
+    },
+    "auto_accept_requests": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, a new eligible public booking request is accepted (status confirmed) on submission without waiting for admin review. Applied server-side by submitPublicBooking. Acceptance only: it never places the booking on the calendar, takes payment or sends a message."
+    },
+    "allow_multiple_services": {
+      "type": "boolean",
+      "default": true,
+      "description": "Persisted setting only \u2014 not yet enforced by public booking."
+    },
+    "max_services_per_booking": {
+      "type": "number",
+      "default": 6,
+      "description": "Persisted setting only \u2014 not yet enforced by public booking."
+    },
+    "default_buffer_minutes": {
+      "type": "number",
+      "default": 25,
+      "description": "Persisted setting only \u2014 scheduling uses each Service's own buffer_mins; this value is not read by the scheduling core."
+    },
+    "appointment_interval_minutes": {
+      "type": "number",
+      "default": 15,
+      "description": "Persisted setting only \u2014 not yet read by placement or the booking page."
+    },
+    "booking_cutoff_hour": {
+      "type": "number",
+      "default": 19,
+      "description": "Hour of day (24h, 17-22) after which next-day bookings close. Persisted setting only \u2014 not yet enforced."
+    },
+    "min_availability_window_hours": {
+      "type": "number",
+      "default": 1,
+      "description": "Persisted setting only \u2014 not yet enforced server-side."
+    },
+    "max_availability_window_hours": {
+      "type": "number",
+      "default": 4,
+      "description": "Persisted setting only \u2014 not yet enforced server-side."
+    },
+    "service_must_fit_window": {
+      "type": "boolean",
+      "default": true,
+      "description": "Persisted setting only \u2014 placement already requires the service to fit; this toggle is not read."
+    },
+    "buffer_can_extend_past_window": {
+      "type": "boolean",
+      "default": true,
+      "description": "Persisted setting only \u2014 not read by the scheduling core."
+    },
+    "core_service_areas": {
+      "type": "string",
+      "description": "Free-text list of core service areas. Persisted setting only \u2014 coverage uses Service Coverage zones."
+    },
+    "out_of_area_after_3pm": {
+      "type": "boolean",
+      "default": false,
+      "description": "Persisted setting only \u2014 out-of-area review rule is not yet enforced."
+    },
+    "cancellation_policy": {
+      "type": "string",
+      "description": "Cancellation policy text. Persisted setting only \u2014 not yet shown to customers."
+    },
+    "allow_client_reschedule": {
+      "type": "boolean",
+      "default": true,
+      "description": "Persisted setting only \u2014 client reschedule requests are not yet implemented."
+    },
+    "client_reschedule_needs_approval": {
+      "type": "boolean",
+      "default": true,
+      "description": "Persisted setting only \u2014 client reschedule requests are not yet implemented."
+    }
+  },
+  "required": [
+    "minimum_notice_hours",
+    "maximum_booking_days"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

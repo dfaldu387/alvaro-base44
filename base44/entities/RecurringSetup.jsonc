@@ -1,0 +1,115 @@
+{
+  "name": "RecurringSetup",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id"
+    },
+    "recurring_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Recurring booking enabled (source of truth for recurring)"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "Weekly",
+        "Fortnightly",
+        "Every 3 Weeks",
+        "Monthly"
+      ],
+      "description": "Recurring frequency (official source)"
+    },
+    "availability_type": {
+      "type": "string",
+      "enum": [
+        "Fixed Time",
+        "Fixed Window",
+        "Flexible"
+      ],
+      "description": "Availability type (official source)"
+    },
+    "usual_day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Usual recurring day"
+    },
+    "usual_time": {
+      "type": "string",
+      "description": "Usual exact time (Fixed Time) e.g. 5:30pm"
+    },
+    "window_start": {
+      "type": "string",
+      "description": "Availability window start e.g. 16:00"
+    },
+    "window_end": {
+      "type": "string",
+      "description": "Availability window end e.g. 19:00"
+    },
+    "default_service": {
+      "type": "string",
+      "description": "Default recurring service"
+    },
+    "default_address": {
+      "type": "string",
+      "description": "Default recurring address"
+    },
+    "weekly_confirmation_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Require weekly confirmation"
+    },
+    "show_on_weekly_schedule": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show on the weekly schedule"
+    },
+    "next_cycle_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Next recurring cycle due date"
+    },
+    "paused": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pause recurring booking"
+    },
+    "skip_cycle_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Skip a specific cycle date"
+    }
+  },
+  "required": [
+    "client_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "name": "AddOn",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Add-on name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Add-on description"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Add-on photo URL"
+    },
+    "price_adjustment": {
+      "type": "number",
+      "default": 0,
+      "description": "Additional price in dollars"
+    },
+    "duration_adjustment": {
+      "type": "number",
+      "default": 0,
+      "description": "Additional duration in minutes"
+    },
+    "variable_price": {
+      "type": "boolean",
+      "default": false,
+      "description": "Price varies (e.g. hair design)"
+    },
+    "min_price": {
+      "type": "number",
+      "description": "Minimum price when variable"
+    },
+    "max_duration": {
+      "type": "number",
+      "description": "Maximum duration when variable"
+    },
+    "compatible_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Service ids this add-on is available with"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Active or inactive"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Display order"
+    },
+    "square_item_id": {
+      "type": "string",
+      "description": "Square catalogue item id (optional)"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

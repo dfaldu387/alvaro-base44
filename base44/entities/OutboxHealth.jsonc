@@ -1,0 +1,66 @@
+{
+  "name": "OutboxHealth",
+  "type": "object",
+  "properties": {
+    "last_run_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start of the most recent sweep run attempt"
+    },
+    "last_successful_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the most recent sweep run completed successfully"
+    },
+    "consecutive_failures": {
+      "type": "number",
+      "default": 0,
+      "description": "Sweep-level failures in a row. Reset to 0 by a successful run."
+    },
+    "items_sent_last_run": {
+      "type": "number",
+      "default": 0,
+      "description": "SIMULATED successes in the last run: items the test-double sender reported as sent. This is not real delivery."
+    },
+    "items_dead_lettered": {
+      "type": "number",
+      "default": 0,
+      "description": "Cumulative count of items moved to dead_letter"
+    },
+    "last_error": {
+      "type": "string",
+      "description": "Safe description of the most recent sweep-level failure (empty after a successful run)"
+    }
+  },
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

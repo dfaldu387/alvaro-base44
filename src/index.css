@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 15% 6%;
+    --foreground: 40 20% 95%;
+    --card: 220 13% 10%;
+    --card-foreground: 40 20% 95%;
+    --popover: 220 13% 10%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 279 100% 44%;
+    /* White, not near-black. This purple is dark, so dark text on it fails
+       contrast. Components were working around it with hardcoded text-white. */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 12% 16%;
+    --secondary-foreground: 40 20% 90%;
+    --muted: 220 10% 14%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 43 80% 55%;
+    --accent-foreground: 220 15% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+    --ring: 43 80% 55%;
+    --chart-1: 43 80% 55%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.75rem;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sidebar-background: 220 13% 8%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 43 80% 55%;
+    --sidebar-primary-foreground: 220 15% 6%;
+    --sidebar-accent: 220 12% 14%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 43 80% 55%;
+  }
+
+  .dark {
+    --background: 220 15% 6%;
+    --foreground: 40 20% 95%;
+    --card: 220 13% 10%;
+    --card-foreground: 40 20% 95%;
+    --popover: 220 13% 10%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 43 80% 55%;
+    --primary-foreground: 220 15% 6%;
+    --secondary: 220 12% 16%;
+    --secondary-foreground: 40 20% 90%;
+    --muted: 220 10% 14%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 43 80% 55%;
+    --accent-foreground: 220 15% 6%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+    --ring: 43 80% 55%;
+    --chart-1: 43 80% 55%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 220 13% 8%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 43 80% 55%;
+    --sidebar-primary-foreground: 220 15% 6%;
+    --sidebar-accent: 220 12% 14%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 43 80% 55%;
+  }
+}
+
+
+
+/* Light admin theme: applied to <body> on every admin page except /admin/route. */
+body.admin-light {
+  --background: 0 0% 100%;
+  --foreground: 240 6% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 6% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 6% 10%;
+  --primary: 240 6% 10%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  --accent: 240 5% 96%;
+  --accent-foreground: 240 6% 10%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 239 84% 67%;
+  --font-heading: 'Inter', sans-serif;
+  --font-display: 'Inter', sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+.wf-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.wf-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+.wf-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Sidebar navigation. The native scrollbar is a thick grey slab sitting inside
+   the panel; this makes it a hairline that only appears while scrolling or on
+   hover, so the nav reads as one surface. Firefox gets the same through
+   scrollbar-width/color, which it supports and Chrome ignores. */
+.nav-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.nav-scroll:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+.nav-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.nav-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nav-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+}
+.nav-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+/* ── Calendar motion ───────────────────────────────────────────────────────
+   How the calendar moves, all in one place. A card glides when it is moved by the
+   server; under the finger it snaps in a fraction of that time, so dragging still
+   feels direct; and everything that appears (banners, prompts, popovers) rises into
+   place instead of blinking on. Short and consistent — never decorative. */
+@layer utilities {
+  .cal-move {
+    transition:
+      top 170ms cubic-bezier(0.32, 0.72, 0, 1),
+      height 170ms cubic-bezier(0.32, 0.72, 0, 1),
+      box-shadow 150ms ease-out,
+      transform 150ms ease-out,
+      border-color 150ms ease-out,
+      background-color 150ms ease-out;
+  }
+  /* While a card is being dragged it must keep up with the pointer: only the
+     5-minute snap is animated, and only just. */
+  .cal-drag {
+    transition: top 70ms ease-out;
+  }
+  .cal-rise {
+    animation: cal-rise 200ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+  .cal-pop {
+    animation: cal-pop 160ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+}
+
+@keyframes cal-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes cal-pop {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal-move,
+  .cal-drag { transition: none; }
+  .cal-rise,
+  .cal-pop { animation: none; }
+}

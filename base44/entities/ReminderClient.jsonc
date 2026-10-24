@@ -1,0 +1,413 @@
+{
+  "name": "ReminderClient",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Client name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Client phone number"
+    },
+    "email": {
+      "type": "string",
+      "description": "Client email address"
+    },
+    "address": {
+      "type": "string",
+      "description": "Client street address"
+    },
+    "suburb": {
+      "type": "string",
+      "description": "Client suburb"
+    },
+    "postcode": {
+      "type": "string",
+      "description": "Client postcode"
+    },
+    "usual_service": {
+      "type": "string",
+      "description": "Usual haircut service"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "Weekly",
+        "Fortnightly",
+        "Every 3 weeks",
+        "Monthly",
+        "Whenever",
+        "Custom"
+      ],
+      "default": "Monthly",
+      "description": "Haircut frequency"
+    },
+    "custom_frequency_days": {
+      "type": "number",
+      "description": "Custom frequency in days (when Custom)"
+    },
+    "cadence_source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "observed",
+        "default"
+      ],
+      "description": "Where the cadence in use came from. manual = a person chose the frequency label (always wins). observed = the median gap measured from completed visits is in use. default = the label is a system default nobody chose (e.g. Monthly stamped on a website client) and no trusted measurement exists yet. Missing on older records: a label other than Monthly is treated as manual; a bare Monthly is treated as unconfirmed and is never replaced by a measurement unless an admin says so."
+    },
+    "cadence_interval_days": {
+      "type": "number",
+      "description": "Measured typical days between completed visits (median of the recent usable gaps). Stored beside the frequency label, never on top of it. Empty when there is not enough history."
+    },
+    "cadence_visit_count": {
+      "type": "number",
+      "description": "How many completed visit days the measurement came from (at most the last 6)."
+    },
+    "cadence_computed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the measured cadence was last changed."
+    },
+    "scheduling_category": {
+      "type": "string",
+      "enum": [
+        "Fixed Time",
+        "Fixed Window",
+        "Flexible"
+      ],
+      "description": "Availability type (source of truth for availability)"
+    },
+    "client_type": {
+      "type": "string",
+      "enum": [
+        "New",
+        "Regular"
+      ],
+      "default": "New",
+      "description": "Client type (New or Regular)"
+    },
+    "manual_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Manual barber-assigned tags"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "Reminder",
+        "Direct message",
+        "Website",
+        "Manual",
+        "Existing booking",
+        "Square import"
+      ],
+      "default": "Reminder",
+      "description": "How the client entered the workflow"
+    },
+    "last_visit_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of last visit"
+    },
+    "next_reminder_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Next reminder date"
+    },
+    "preferred_day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Preferred booking day"
+    },
+    "preferred_time": {
+      "type": "string",
+      "description": "Preferred exact time e.g. 5:30pm (Fixed Time)"
+    },
+    "availability_window": {
+      "type": "string",
+      "description": "Usual availability window e.g. after 3pm"
+    },
+    "reminder_status": {
+      "type": "string",
+      "enum": [
+        "Due This Week",
+        "Due Next Week",
+        "Due Later",
+        "Waiting for Reply",
+        "Needs Booking",
+        "Booked",
+        "Not This Week",
+        "Manual Follow-up",
+        "Paused"
+      ],
+      "default": "Due Later",
+      "description": "Long-term reminder status"
+    },
+    "reminder_message": {
+      "type": "string",
+      "description": "Default reminder message"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "is_paused": {
+      "type": "boolean",
+      "default": false,
+      "description": "Reminders paused (inactive client)"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "Client archived (hidden from active directory)"
+    },
+    "workflow_stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "needs_reminder",
+        "waiting_on_response",
+        "time_received",
+        "confirmed"
+      ],
+      "default": "none",
+      "description": "Current weekly workflow stage"
+    },
+    "workflow_updated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last workflow update time"
+    },
+    "reminder_sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When reminder was sent this week"
+    },
+    "follow_up_sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When follow-up was sent this week"
+    },
+    "follow_up_due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Follow-up due date for this week"
+    },
+    "received_day": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Flexible"
+      ],
+      "description": "Day the client offered this week"
+    },
+    "time_received_status": {
+      "type": "string",
+      "enum": [
+        "waiting",
+        "added_to_schedule"
+      ],
+      "default": "waiting",
+      "description": "Time Received column status"
+    },
+    "confirmed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Confirmed appointment date"
+    },
+    "confirmed_time": {
+      "type": "string",
+      "description": "Confirmed appointment time"
+    },
+    "confirmation_status": {
+      "type": "string",
+      "enum": [
+        "waiting_confirmation",
+        "client_confirmed"
+      ],
+      "default": "waiting_confirmation",
+      "description": "Confirmation status for Confirmed stage"
+    },
+    "appointment_check_sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When an appointment check was last sent"
+    },
+    "weekly_note": {
+      "type": "string",
+      "description": "Short note for this week only"
+    },
+    "recurring_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Recurring booking enabled (source of truth for recurring)"
+    },
+    "recurring_frequency": {
+      "type": "string",
+      "description": "Recurring booking frequency (source of truth)"
+    },
+    "recurring_day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Recurring preferred day"
+    },
+    "recurring_time": {
+      "type": "string",
+      "description": "Recurring exact time (Fixed Time) or label"
+    },
+    "recurring_window_start": {
+      "type": "string",
+      "description": "Recurring availability window start e.g. 16:00"
+    },
+    "recurring_window_end": {
+      "type": "string",
+      "description": "Recurring availability window end e.g. 19:00"
+    },
+    "recurring_service": {
+      "type": "string",
+      "description": "Default recurring service"
+    },
+    "recurring_address": {
+      "type": "string",
+      "description": "Default recurring address"
+    },
+    "recurring_create_draft": {
+      "type": "boolean",
+      "default": false,
+      "description": "Create future recurring request as a draft"
+    },
+    "recurring_weekly_confirmation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Require weekly confirmation for recurring booking"
+    },
+    "recurring_paused": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pause recurring booking"
+    },
+    "recurring_skip_cycle": {
+      "type": "boolean",
+      "default": false,
+      "description": "Skip this recurring cycle"
+    },
+    "show_on_weekly_schedule": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show recurring planning item on the weekly schedule"
+    },
+    "next_cycle_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Next recurring cycle due date"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Test data flag. True for clients created from a test booking. Test clients are excluded from production reporting, reminders and automated outreach, and can be bulk-deleted. An existing real client is never converted to test."
+    },
+    "messaging_opted_out": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when this client must not receive automated messages (replied STOP, was opted out by an admin, or declined messaging on the booking form). The sweep suppresses every message to an opted-out client."
+    },
+    "opted_out_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the client opted out. Cleared when they opt back in."
+    },
+    "opt_out_source": {
+      "type": "string",
+      "description": "How they opted out: sms_reply, admin or booking_form. Cleared when they opt back in."
+    },
+    "no_show_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many bookings this client has missed. Always recomputed from NoShowRecord (one per booking), so a retried or repeated no-show can never inflate it. For future deposit rules."
+    },
+    "last_no_show_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Service date of the most recent no-show."
+    },
+    "is_favourite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Favourite client flag (single source of truth). A scheduling preference only: Route Flow should prefer stronger placements for favourite clients, but it never protects their bookings and never moves locked or confirmed appointments for them. Independent of test-client classification."
+    }
+  },
+  "required": [
+    "client_name",
+    "frequency"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,263 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Team member name"
+    },
+    "initials": {
+      "type": "string",
+      "description": "Avatar initials"
+    },
+    "email": {
+      "type": "string",
+      "description": "Staff email address (used for login invite)"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Staff phone number"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Job title e.g. Owner, Barber"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "admin",
+        "barber"
+      ],
+      "default": "barber",
+      "description": "System role"
+    },
+    "is_bookable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Available for online booking"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Inactive"
+      ],
+      "default": "Active",
+      "description": "Team member status"
+    },
+    "invite_status": {
+      "type": "string",
+      "enum": [
+        "not_invited",
+        "invite_sent",
+        "active",
+        "inactive"
+      ],
+      "default": "not_invited",
+      "description": "Staff invitation / activation status"
+    },
+    "invite_token": {
+      "type": "string",
+      "description": "Secure invitation token for staff account setup"
+    },
+    "invite_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation token expires"
+    },
+    "invite_accepted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation was accepted"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Linked User id"
+    },
+    "avatar_color": {
+      "type": "string",
+      "default": "#5E42F3",
+      "description": "Calendar colour"
+    },
+    "working_hours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day_of_week": {
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "is_open": {
+            "type": "boolean",
+            "default": true
+          },
+          "open_time": {
+            "type": "number",
+            "description": "Opening time as decimal hour"
+          },
+          "close_time": {
+            "type": "number",
+            "description": "Closing time as decimal hour"
+          }
+        }
+      },
+      "default": [],
+      "description": "Weekly working hours (source of truth for availability)"
+    },
+    "special_hours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "is_open": {
+            "type": "boolean",
+            "default": false
+          },
+          "open_time": {
+            "type": "number",
+            "description": "Opening time as decimal hour"
+          },
+          "close_time": {
+            "type": "number",
+            "description": "Closing time as decimal hour"
+          },
+          "label": {
+            "type": "string",
+            "description": "e.g. ANZAC Day, Public Holiday"
+          },
+          "note": {
+            "type": "string",
+            "description": "Optional note"
+          }
+        }
+      },
+      "default": [],
+      "description": "Special hours / exceptions (override normal weekly hours for a specific date)"
+    },
+    "allow_early_extension": {
+      "type": "boolean",
+      "default": true,
+      "description": "Allow scheduling before normal working hours (early extension)"
+    },
+    "early_extension_minutes": {
+      "type": "number",
+      "default": 30,
+      "description": "Minutes of early extension allowed before normal working hours"
+    },
+    "allow_late_extension": {
+      "type": "boolean",
+      "default": true,
+      "description": "Allow scheduling after normal working hours (late extension)"
+    },
+    "late_extension_minutes": {
+      "type": "number",
+      "default": 60,
+      "description": "Minutes of late extension allowed after normal working hours"
+    },
+    "after_hours_manual_approval": {
+      "type": "boolean",
+      "default": true,
+      "description": "After-hours appointments require manual approval"
+    },
+    "after_hours_allow_groups": {
+      "type": "boolean",
+      "default": true,
+      "description": "Allow after-hours appointments for group bookings"
+    },
+    "after_hours_allow_priority": {
+      "type": "boolean",
+      "default": true,
+      "description": "Allow after-hours appointments for priority/high-value bookings"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Availability notes"
+    },
+    "assigned_service_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Service ids this team member can perform"
+    },
+    "notification_email_bookings": {
+      "type": "boolean",
+      "default": true,
+      "description": "Email booking notifications"
+    },
+    "notification_sms_bookings": {
+      "type": "boolean",
+      "default": false,
+      "description": "SMS booking notifications"
+    },
+    "alternate_email": {
+      "type": "string",
+      "description": "Alternate notification email"
+    },
+    "alternate_phone": {
+      "type": "string",
+      "description": "Alternate notification phone"
+    },
+    "start_location_address": {
+      "type": "string",
+      "description": "Default start location for this barber's day (formatted address). The barber profile is the source of truth for the origin of the first appointment's travel leg \u2014 there is no business-wide start location. Empty when not set."
+    },
+    "start_location_lat": {
+      "type": "number",
+      "description": "Latitude of the saved start location. Cleared whenever the address text is edited, so coordinates are never left stale. Missing or null means the start location is not configured and first-leg travel cannot be verified."
+    },
+    "start_location_lng": {
+      "type": "number",
+      "description": "Longitude of the saved start location. Cleared whenever the address text is edited, so coordinates are never left stale. Missing or null means the start location is not configured and first-leg travel cannot be verified."
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

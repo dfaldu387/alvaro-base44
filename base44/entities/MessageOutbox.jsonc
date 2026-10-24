@@ -1,0 +1,172 @@
+{
+  "name": "MessageOutbox",
+  "type": "object",
+  "properties": {
+    "idempotency_key": {
+      "type": "string",
+      "description": "channel|target_id|event_type, e.g. sms|db-abc123|booking_confirmed. One business event = one key. Unique across the table (enforced by enqueueMessage)."
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "sms",
+        "whatsapp",
+        "email"
+      ],
+      "description": "Delivery channel"
+    },
+    "to_address": {
+      "type": "string",
+      "description": "Phone number or email address"
+    },
+    "template_key": {
+      "type": "string",
+      "description": "Which message template to render"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Variables the template needs: name, date, time, service, address, amount, links"
+    },
+    "rendered_text": {
+      "type": "string",
+      "description": "Final message body once rendered"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "claimed",
+        "sent",
+        "failed",
+        "dead_letter",
+        "suppressed"
+      ],
+      "default": "pending",
+      "description": "Delivery state"
+    },
+    "attempt_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many delivery attempts have been made"
+    },
+    "next_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the sweep may next try this item"
+    },
+    "claimed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Set when a sweep run takes the item"
+    },
+    "last_error": {
+      "type": "string",
+      "description": "Human-readable reason the last attempt failed"
+    },
+    "dead_letter_reason": {
+      "type": "string",
+      "description": "Why the item was given up on"
+    },
+    "suppressed_reason": {
+      "type": "string",
+      "description": "Why it was never sent, e.g. test data, opt-out, quiet hours"
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "Related booking request"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Related client"
+    },
+    "message_id": {
+      "type": "string",
+      "description": "Related message"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when a linked booking or client is test data. Test items are never delivered."
+    },
+    "provider_message_id": {
+      "type": "string",
+      "description": "The provider's message id (Twilio SID), stored as soon as the provider accepts the message. If present, a retry never sends the message again."
+    },
+    "is_manual": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for an admin-triggered manual send. Manual sends skip quiet hours but still obey test-data suppression and opt-out."
+    },
+    "deferral_reason": {
+      "type": "string",
+      "description": "Why the item was last put back to wait, e.g. quiet hours. Shown to admins; the item stays pending."
+    },
+    "claim_token": {
+      "type": "string",
+      "description": "Id of the sweep run that currently owns this item. Only that run may finish it."
+    },
+    "provider_delivery_status": {
+      "type": "string",
+      "description": "delivered or failed, recorded from a provider status callback that arrived before the Message existed. The sweep applies it to the Message once it is created."
+    },
+    "provider_error_code": {
+      "type": "string",
+      "description": "Provider error code that came with a failed callback."
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Result of every processing attempt, oldest first. Never contains addresses or message content."
+    }
+  },
+  "required": [
+    "idempotency_key",
+    "channel",
+    "to_address"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

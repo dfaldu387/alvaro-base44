@@ -1,0 +1,67 @@
+{
+  "name": "NoShowRecord",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking that was a no-show. One record per booking: this is what stops a retry counting twice."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The client who did not show (empty when the booking has no client record)."
+    },
+    "service_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date of the missed appointment."
+    },
+    "recorded_by": {
+      "type": "string",
+      "description": "Name of the person who marked the no-show."
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it was marked."
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the booking was test data."
+    }
+  },
+  "required": [
+    "booking_request_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

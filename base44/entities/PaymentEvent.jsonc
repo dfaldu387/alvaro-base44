@@ -1,0 +1,96 @@
+{
+  "name": "PaymentEvent",
+  "type": "object",
+  "properties": {
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking this event is about."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "evaluated",
+        "payment_received",
+        "provider_payment",
+        "deposit_waived",
+        "link_requested",
+        "refund_recorded",
+        "migrated",
+        "written_off",
+        "refund_resolved",
+        "provider_webhook_payment",
+        "provider_webhook_refund",
+        "provider_webhook_ignored",
+        "deposit_retained"
+      ],
+      "description": "What happened."
+    },
+    "refund_outcome": {
+      "type": "string",
+      "enum": [
+        "keep",
+        "cancel"
+      ],
+      "description": "On a refund: what the admin chose it to mean. keep = refund only, the appointment still stands and the booking stays payable; cancel = refund and cancel the booking."
+    },
+    "from_state": {
+      "type": "string",
+      "description": "State before."
+    },
+    "to_state": {
+      "type": "string",
+      "description": "State after."
+    },
+    "amount": {
+      "type": "number",
+      "description": "Dollars involved, when any."
+    },
+    "actor": {
+      "type": "string",
+      "description": "Who did it (admin name, 'system', or 'Square webhook')."
+    },
+    "note": {
+      "type": "string",
+      "description": "Plain-language detail, including any waive or refund reason."
+    },
+    "provider_event_id": {
+      "type": "string",
+      "description": "The payment provider's event id for events that came from a verified webhook. A repeat delivery of the same id is answered without changing anything."
+    },
+    "is_simulated": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when produced by the test double. Shown as SIMULATED in the admin UI."
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "booking_request_id",
+    "event_type"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

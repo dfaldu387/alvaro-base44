@@ -1,0 +1,346 @@
+{
+  "name": "HomepageSettings",
+  "type": "object",
+  "properties": {
+    "business_name": {
+      "type": "string",
+      "default": "Cut Deluxe",
+      "description": "Public business display name"
+    },
+    "tagline": {
+      "type": "string",
+      "default": "Mobile Barbering",
+      "description": "Short tagline under the logo"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Public contact phone"
+    },
+    "email": {
+      "type": "string",
+      "description": "Public contact email"
+    },
+    "instagram": {
+      "type": "string",
+      "description": "Instagram URL"
+    },
+    "social_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Additional social links"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Custom logo image URL"
+    },
+    "favicon_url": {
+      "type": "string",
+      "description": "Custom favicon URL"
+    },
+    "footer_text": {
+      "type": "string",
+      "default": "More than a haircut. It's a better way to get cut.",
+      "description": "Footer tagline"
+    },
+    "hero_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "hero_eyebrow": {
+      "type": "string",
+      "default": "SYDNEY MOBILE BARBERING"
+    },
+    "hero_headline": {
+      "type": "string",
+      "default": "Premium Cuts."
+    },
+    "hero_highlight": {
+      "type": "string",
+      "default": "At Your Door.",
+      "description": "Text rendered in purple"
+    },
+    "hero_description": {
+      "type": "string",
+      "default": "Professional barbering brought directly to you. Choose your service, tell us when you're available, and we'll organise the route."
+    },
+    "hero_image_url": {
+      "type": "string",
+      "description": "Hero visual image URL"
+    },
+    "hero_primary_cta_label": {
+      "type": "string",
+      "default": "Book Now"
+    },
+    "hero_primary_cta_link": {
+      "type": "string",
+      "default": "/book"
+    },
+    "hero_secondary_cta_label": {
+      "type": "string",
+      "default": "View Service Areas"
+    },
+    "hero_secondary_cta_link": {
+      "type": "string",
+      "default": "#areas"
+    },
+    "trust_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "trust_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "description": "lucide icon name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "sort_order": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "Quick trust / benefit indicators under the hero"
+    },
+    "services_heading": {
+      "type": "string",
+      "default": "Services & Pricing"
+    },
+    "services_description": {
+      "type": "string"
+    },
+    "services_show_addons": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_heading": {
+      "type": "string",
+      "default": "Where We Come To You"
+    },
+    "areas_description": {
+      "type": "string",
+      "default": "We operate across Sydney on scheduled area days. Select your area to see when we're nearby."
+    },
+    "areas_show_map": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_show_cards": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_show_days": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_show_priority_explainer": {
+      "type": "boolean",
+      "default": true
+    },
+    "areas_outside_heading": {
+      "type": "string",
+      "default": "Outside our priority area?"
+    },
+    "areas_outside_text": {
+      "type": "string",
+      "default": "You can still request a booking. Clients inside our scheduled service region are prioritised when routes are finalised."
+    },
+    "howitworks_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "howitworks_heading": {
+      "type": "string",
+      "default": "How It Works"
+    },
+    "howitworks_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "sort_order": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "How it works steps"
+    },
+    "group_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "group_heading": {
+      "type": "string",
+      "default": "Cutting the whole crew?"
+    },
+    "group_description": {
+      "type": "string",
+      "default": "Book two or more people at the same address and save when group discounts are enabled."
+    },
+    "afterhours_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "afterhours_heading": {
+      "type": "string",
+      "default": "After-Hours Cuts"
+    },
+    "afterhours_description": {
+      "type": "string",
+      "default": "Need a cut outside our regular route? Submit an after-hours request and we'll let you know what's possible."
+    },
+    "afterhours_starting_price": {
+      "type": "number",
+      "description": "Optional starting price shown in the block"
+    },
+    "afterhours_cta_label": {
+      "type": "string",
+      "default": "Request After Hours"
+    },
+    "afterhours_cta_link": {
+      "type": "string",
+      "default": "/book"
+    },
+    "value_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "value_heading": {
+      "type": "string",
+      "default": "Why Cut Deluxe"
+    },
+    "value_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "sort_order": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "Value proposition cards"
+    },
+    "finalcta_heading": {
+      "type": "string",
+      "default": "Ready for your next cut?"
+    },
+    "finalcta_description": {
+      "type": "string",
+      "default": "Tell us where you are and when you're free."
+    },
+    "finalcta_primary_label": {
+      "type": "string",
+      "default": "Book Now"
+    },
+    "finalcta_primary_link": {
+      "type": "string",
+      "default": "/book"
+    },
+    "finalcta_secondary_label": {
+      "type": "string",
+      "default": "View Service Areas"
+    },
+    "finalcta_secondary_link": {
+      "type": "string",
+      "default": "#areas"
+    },
+    "faq_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "faq_heading": {
+      "type": "string",
+      "default": "FAQ"
+    }
+  },
+  "required": [
+    "business_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "name": "CampaignEntry",
+  "type": "object",
+  "properties": {
+    "campaign_week": {
+      "type": "string",
+      "description": "ISO week in the campaign timezone."
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "outreach",
+        "followup"
+      ]
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "For the admin report only."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "would_queue",
+        "queued",
+        "skipped",
+        "capped",
+        "enqueue_failed"
+      ],
+      "description": "would_queue = dry-run preview. queued = on the outbox (its delivery state is read live from the outbox, never stored here). skipped = excluded, see reason. capped = eligible but over the run limit. enqueue_failed = the outbox refused it."
+    },
+    "reason_code": {
+      "type": "string",
+      "description": "Why it was skipped, capped or failed."
+    },
+    "reason_text": {
+      "type": "string",
+      "description": "Plain-language reason, with detail when useful."
+    },
+    "next_reminder_date": {
+      "type": "string",
+      "description": "The reminder date the decision was based on."
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "outbox_id": {
+      "type": "string",
+      "description": "MessageOutbox row for a queued entry."
+    },
+    "preview_text": {
+      "type": "string",
+      "description": "The message exactly as it would be rendered, for dry-run review."
+    },
+    "run_id": {
+      "type": "string",
+      "description": "CampaignRun that wrote this entry."
+    },
+    "dry_run": {
+      "type": "boolean",
+      "default": true
+    },
+    "queued_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "campaign_week",
+    "stage",
+    "client_id",
+    "outcome"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

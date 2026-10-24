@@ -1,0 +1,255 @@
+{
+  "name": "DayRoute",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Exact calendar date (YYYY-MM-DD) this route belongs to. Routes are date-bound: the same weekday on two different dates is two different routes."
+    },
+    "day": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "description": "Weekday name (display only \u2014 `date` is the source of truth)"
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Barber this route belongs to (empty = unassigned appointments)"
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Barber name (denormalised for display)"
+    },
+    "is_test": {
+      "type": "boolean",
+      "default": false,
+      "description": "Test-data universe this route covers. Test routes only ever contain test appointments, exactly as Route Flow separates them."
+    },
+    "route_status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "finalising",
+        "finalised",
+        "needs_update"
+      ],
+      "default": "draft",
+      "description": "Day-level route state. draft = still planning, the calendar is a flexible layout and no route is committed; finalising = the admin pressed Finalise Route and the optimiser is working (an in-flight state only \u2014 never left behind by a completed run); finalised = the day was connected, compressed and validated, and the drive legs are live; needs_update = the day's scheduling data changed after finalisation, so the stored route no longer describes the day and must be rebuilt before it is trusted."
+    },
+    "fingerprint": {
+      "type": "string",
+      "description": "The scheduling data this route was built from: every appointment's id, time, protection state, duration and location. Comparing it with the day as it stands is how a finalised route is recognised as out of date. Execution-only changes (arrived, completed) do not alter it."
+    },
+    "finalised_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the route was finalised"
+    },
+    "finalised_by": {
+      "type": "string",
+      "description": "Name of the admin who finalised the route"
+    },
+    "needs_update_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the route was marked as needing an update"
+    },
+    "needs_update_reason": {
+      "type": "string",
+      "description": "Plain-language reason the finalised route no longer matches the day, e.g. \"An appointment changed after the route was finalised\"."
+    },
+    "appointments_count": {
+      "type": "number",
+      "description": "Appointments included in the route"
+    },
+    "appointments_moved": {
+      "type": "number",
+      "description": "Appointments whose time the finalisation changed"
+    },
+    "drive_minutes": {
+      "type": "number",
+      "description": "Total driving minutes for the finalised route, including the leg from the barber's start location"
+    },
+    "idle_minutes": {
+      "type": "number",
+      "description": "Total idle (dead) minutes left after required travel \u2014 only ever caused by a real constraint such as customer availability, a locked appointment, a break or working hours"
+    },
+    "waste_minutes": {
+      "type": "number",
+      "description": "drive_minutes + idle_minutes \u2014 the whole cost of the route. Lower is better; nothing else is weighted."
+    },
+    "drive_legs_created": {
+      "type": "number",
+      "description": "Derived drive legs written between consecutive stops (the start location to the first appointment is stored separately as first_leg_minutes)"
+    },
+    "protected_moved": {
+      "type": "number",
+      "description": "Locked or confirmed appointments moved. Always 0 \u2014 anything else is a fault."
+    },
+    "start_location_address": {
+      "type": "string",
+      "description": "The barber's saved start location for the day (origin of the first leg)"
+    },
+    "start_location_configured": {
+      "type": "boolean",
+      "default": false,
+      "description": "False when the barber profile has no usable start-location coordinates, so the first leg could not be verified"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "First appointment's start time on the finalised route"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "Last appointment's end time on the finalised route"
+    },
+    "first_leg_minutes": {
+      "type": "number",
+      "description": "Driving minutes from the barber's start location to the first appointment"
+    },
+    "stops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "booking_request_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number"
+          },
+          "start_label": {
+            "type": "string"
+          },
+          "start_decimal": {
+            "type": "number"
+          },
+          "end_label": {
+            "type": "string"
+          },
+          "drive_minutes": {
+            "type": "number",
+            "description": "Driving minutes from this stop to the next one"
+          }
+        }
+      },
+      "default": [],
+      "description": "The route's execution order: each stop with its time and the drive leg that follows it"
+    },
+    "stop_execution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "booking_request_id": {
+            "type": "string",
+            "description": "The stop this entry belongs to (matches stops[].booking_request_id)."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "on_the_way",
+              "arrived",
+              "in_service",
+              "completed",
+              "skipped"
+            ],
+            "description": "Execution state. Only states a stop can be put in are stored. \"Barber preparing\" and \"Arriving soon\" are worked out for the customer's tracking view and never stored. A stop with no entry (finalised before execution tracking) is planned. Only advanceRouteStop changes it."
+          },
+          "customer_state": {
+            "type": "string",
+            "enum": [
+              "Confirmed",
+              "On the way",
+              "Arrived",
+              "Completed"
+            ],
+            "description": "The customer-facing label that goes with the stored state."
+          },
+          "on_the_way_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the on-the-way message was queued."
+          },
+          "arrived_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the barber marked Arrived."
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the barber marked Start."
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the barber marked Complete."
+          },
+          "actual_duration_minutes": {
+            "type": "number",
+            "description": "Minutes from Start to Complete, computed on completion."
+          },
+          "skip_reason": {
+            "type": "string",
+            "description": "Why the stop was skipped (required to skip)."
+          },
+          "updated_by": {
+            "type": "string",
+            "description": "Who made the most recent change to this stop."
+          }
+        }
+      },
+      "default": [],
+      "description": "What actually happened at each stop on the day, keyed by booking_request_id. Kept beside stops[] so rebuilding the route never erases the day's progress."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short human-readable headline, e.g. '4 stops \u00b7 38 min driving \u00b7 10 min idle'"
+    }
+  },
+  "required": [
+    "date",
+    "route_status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

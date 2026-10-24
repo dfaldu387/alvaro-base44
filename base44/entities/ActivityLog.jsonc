@@ -1,0 +1,203 @@
+{
+  "name": "ActivityLog",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "Linked Client record id (where relevant)"
+    },
+    "related_record_id": {
+      "type": "string",
+      "description": "Id of the related record"
+    },
+    "related_record_type": {
+      "type": "string",
+      "enum": [
+        "Client",
+        "RecurringSetup",
+        "BookingRequest",
+        "WorkflowItem",
+        "Appointment",
+        "Message",
+        "SquarePayment",
+        "DayRoute"
+      ],
+      "description": "Type of the related record"
+    },
+    "action": {
+      "type": "string",
+      "description": "What happened e.g. reminder_sent, appointment_completed, status_recalculated, route_flow_optimised"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "reshuffle",
+        "fit",
+        "reshuffle_applied",
+        "skipped_threshold",
+        "schedule_changed",
+        "suggestion_created",
+        "route_finalised",
+        "route_needs_update"
+      ],
+      "description": "Structured Route Flow event behind this entry. reshuffle = provisional appointments rearranged automatically; fit = an unresolved request fitted by rearranging the day; reshuffle_applied = an admin applied a reviewed suggestion; skipped_threshold = a better arrangement existed but the saving was below the threshold, so nothing moved; schedule_changed = the day changed while Route Flow was working, so the plan was abandoned/retried; suggestion_created = Suggest mode recorded a suggestion it never applies itself; route_finalised = the admin pressed Finalise Route and the day's route was built (appointments included, appointments moved, drive and idle before and after, drive legs created, protected appointments moved: 0); route_needs_update = a finalised day's scheduling data changed, so its route is out of date until it is rebuilt."
+    },
+    "schedule_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The calendar date this activity affected (YYYY-MM-DD). Entries are date-bound: two different Fridays are two different days."
+    },
+    "actor_type": {
+      "type": "string",
+      "enum": [
+        "route_flow",
+        "admin"
+      ],
+      "description": "Who made the decision: route_flow (automation, no human involved) or admin (a person acted)."
+    },
+    "actor_name": {
+      "type": "string",
+      "description": "Name of the person who acted when actor_type is admin; empty for automation."
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "automation",
+        "admin_panel",
+        "manual_calendar",
+        "reshuffle_apply",
+        "schedule_change"
+      ],
+      "description": "What triggered the work."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "applied",
+        "placed",
+        "unscheduled",
+        "skipped",
+        "aborted",
+        "pending_review",
+        "failed"
+      ],
+      "description": "What the activity ended as, so a card can be read without parsing text."
+    },
+    "bookings_evaluated": {
+      "type": "number",
+      "description": "How many appointments Route Flow looked at for this decision"
+    },
+    "appointments_moved": {
+      "type": "number",
+      "description": "How many appointments changed time"
+    },
+    "requests_placed": {
+      "type": "number",
+      "description": "How many booking requests were given a calendar slot"
+    },
+    "requests_unscheduled": {
+      "type": "number",
+      "description": "How many booking requests were left without a calendar slot"
+    },
+    "protected_appointments_moved": {
+      "type": "number",
+      "description": "Locked or confirmed appointments moved. Always 0 \u2014 anything else is a fault."
+    },
+    "drive_minutes_before": {
+      "type": "number",
+      "description": "Driving minutes for the day before the change (null when not applicable)"
+    },
+    "drive_minutes_after": {
+      "type": "number",
+      "description": "Driving minutes for the day after the change (null when not applicable)"
+    },
+    "idle_minutes_before": {
+      "type": "number",
+      "description": "Idle minutes for the day before the change (null when not applicable)"
+    },
+    "idle_minutes_after": {
+      "type": "number",
+      "description": "Idle minutes for the day after the change (null when not applicable)"
+    },
+    "reason_code": {
+      "type": "string",
+      "description": "Short machine-readable reason when an action was skipped, aborted or refused."
+    },
+    "reason_text": {
+      "type": "string",
+      "description": "Plain-language reason shown to the admin when an action was skipped, aborted or refused."
+    },
+    "details_json": {
+      "type": "object",
+      "description": "Expanded detail for the \"View details\" panel: per-appointment time changes, thresholds, codes. Never contains client names, addresses or contact details \u2014 only booking request ids and times."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short human-readable headline for the activity feed, e.g. 'Route Flow optimised Thursday 8 Oct'"
+    },
+    "detail": {
+      "type": "string",
+      "description": "Plain-language breakdown of the activity, e.g. '3 provisional appointments moved \u00b7 28 min driving saved \u00b7 17 min idle saved \u00b7 0 protected appointments moved'. Never contains client names or contact details."
+    },
+    "previous_value": {
+      "type": "string",
+      "description": "Previous value (if changed)"
+    },
+    "new_value": {
+      "type": "string",
+      "description": "New value (if changed)"
+    },
+    "actor": {
+      "type": "string",
+      "enum": [
+        "barber",
+        "base44_automation",
+        "n8n",
+        "claude_suggestion",
+        "square_sync"
+      ],
+      "default": "barber",
+      "description": "Who or what caused the change"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the activity occurred"
+    }
+  },
+  "required": [
+    "action",
+    "actor"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "GroupBookingEnquiry",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Client's name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Client's phone number"
+    },
+    "address": {
+      "type": "string",
+      "description": "Client's suburb/address"
+    },
+    "num_people": {
+      "type": "number",
+      "description": "Number of people in the group"
+    },
+    "preferred_day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Preferred day"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "confirmed",
+        "declined"
+      ],
+      "default": "new",
+      "description": "Enquiry status"
+    }
+  },
+  "required": [
+    "client_name",
+    "phone"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

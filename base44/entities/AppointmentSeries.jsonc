@@ -1,0 +1,150 @@
+{
+  "name": "AppointmentSeries",
+  "type": "object",
+  "description": "One repeating manual appointment and the bookings it created. Each occurrence is an ordinary BookingRequest; this row is what keeps them together as a series so 'this and future occurrences' can be found later. Created by the create-appointment form when Repeat is switched on.",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "The client the series belongs to."
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client name at the time the series was created (denormalised for display)."
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "The barber the series was booked with."
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Barber name (denormalised for display)."
+    },
+    "scheduling_type": {
+      "type": "string",
+      "enum": [
+        "exact",
+        "window"
+      ],
+      "description": "The scheduling type every occurrence keeps: exact = the agreed time, window = an availability window Route Flow may place inside."
+    },
+    "availability_window": {
+      "type": "string",
+      "description": "The window or time every occurrence uses, e.g. 5:00pm\u20137:00pm."
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Service names booked on every occurrence."
+    },
+    "duration_mins": {
+      "type": "number",
+      "description": "Service duration for one occurrence, from the catalogue."
+    },
+    "frequency_weeks": {
+      "type": "number",
+      "default": 1,
+      "description": "How often the series repeats, in weeks (1 = weekly, 2 = every 2 weeks, \u2026)."
+    },
+    "frequency_label": {
+      "type": "string",
+      "description": "Plain-language frequency, e.g. Weekly, Every 2 weeks."
+    },
+    "ends": {
+      "type": "string",
+      "enum": [
+        "never",
+        "after",
+        "on"
+      ],
+      "default": "never",
+      "description": "How the series ends: never (a rolling horizon of upcoming occurrences), after a number of appointments, or on a date."
+    },
+    "ends_label": {
+      "type": "string",
+      "description": "Plain-language end rule, e.g. Never, 6 appointments, Until 20 Dec 2026."
+    },
+    "until_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Last date the series may fall on, when ends = on."
+    },
+    "first_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the first occurrence."
+    },
+    "booking_request_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "The bookings this series created, in date order."
+    },
+    "occurrences_created": {
+      "type": "number",
+      "default": 0,
+      "description": "How many bookings were created for this series."
+    },
+    "notes": {
+      "type": "string",
+      "description": "The notes every occurrence was created with."
+    }
+  },
+  "required": [
+    "first_date",
+    "frequency_weeks"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

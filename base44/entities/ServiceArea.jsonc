@@ -1,0 +1,159 @@
+{
+  "name": "ServiceArea",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Customer-facing area name e.g. St George"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional zone description shown to customers"
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Assigned barber (TeamMember id)"
+    },
+    "team_member_name": {
+      "type": "string",
+      "description": "Assigned barber name (denormalised for display)"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Active areas appear in public booking; inactive remain stored in admin only"
+    },
+    "geometry": {
+      "type": "string",
+      "description": "GeoJSON Polygon geometry (JSON string) defining the zone boundary. When present, used for map display on both admin and customer maps. Parsed to an object at the API boundary."
+    },
+    "centre_suburb": {
+      "type": "string",
+      "description": "Centre suburb for this zone (used for geocoding and display)"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Centre latitude for the zone (geographic centre point)"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Centre longitude for the zone (geographic centre point)"
+    },
+    "radius_km": {
+      "type": "number",
+      "default": 10,
+      "description": "Service radius in kilometres from this zone's centre. One zone = one radius. Drawn as a single circle on the map. Used for customer eligibility \u2014 customers within this radius can submit a booking."
+    },
+    "colour": {
+      "type": "string",
+      "default": "#8B5CF6",
+      "description": "Map and card colour (hex)"
+    },
+    "suburbs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Suburb names for search/reference"
+    },
+    "postcodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Postcodes for search/reference"
+    },
+    "service_days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day_of_week": {
+            "type": "string",
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "open_time": {
+            "type": "number",
+            "description": "Opening time as decimal hour (e.g. 9 = 9:00am, 13.5 = 1:30pm)"
+          },
+          "close_time": {
+            "type": "number",
+            "description": "Closing time as decimal hour"
+          },
+          "max_bookings": {
+            "type": "number",
+            "description": "Max bookings for this day (counts bookings, not add-ons)"
+          }
+        }
+      },
+      "default": [],
+      "description": "Weekly service schedule for this area"
+    },
+    "max_bookings_per_day": {
+      "type": "number",
+      "default": 8,
+      "description": "Default max bookings per day when a day has no explicit max_bookings"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

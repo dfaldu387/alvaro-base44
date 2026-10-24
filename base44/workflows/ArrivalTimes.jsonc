@@ -1,0 +1,45 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 * * * *",
+      "one_time_date": null,
+      "timezone": "Australia/Sydney",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Hourly, queues the night-before arrival-time messages for finalised routes.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "arrival_times",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_arrival_times": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "sendArrivalTimes",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send arrival times",
+            "description": "Queue arrival-time messages"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Arrival Times"
+}

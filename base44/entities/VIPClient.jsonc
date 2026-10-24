@@ -1,0 +1,92 @@
+{
+  "name": "VIPClient",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "VIP client name"
+    },
+    "address": {
+      "type": "string",
+      "description": "Client's suburb/address"
+    },
+    "recurring_day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Recurring day"
+    },
+    "recurring_time": {
+      "type": "string",
+      "description": "Fixed appointment time e.g. 11:00am"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notes about VIP client"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether VIP is currently active"
+    }
+  },
+  "required": [
+    "client_name",
+    "recurring_day",
+    "recurring_time"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

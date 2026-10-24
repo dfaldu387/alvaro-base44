@@ -1,0 +1,85 @@
+{
+  "name": "UnmatchedReply",
+  "type": "object",
+  "properties": {
+    "from_phone": {
+      "type": "string",
+      "description": "The number the reply came from."
+    },
+    "reply_text": {
+      "type": "string",
+      "description": "The reply, exactly as sent."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why it could not be matched to one booking, e.g. no client with this number, no booking today or tomorrow, more than one booking."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The client the number matched, when there was one."
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "customer_confirmed",
+        "needs_attention",
+        "other"
+      ],
+      "description": "How the text was classified."
+    },
+    "provider_message_id": {
+      "type": "string",
+      "description": "Twilio MessageSid; makes a webhook retry store it once."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "reviewed"
+      ],
+      "default": "open"
+    },
+    "reviewed_by": {
+      "type": "string"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "from_phone",
+    "reply_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

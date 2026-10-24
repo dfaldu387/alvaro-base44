@@ -1,0 +1,94 @@
+{
+  "name": "CampaignDryRunApproval",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "applied",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "pending = waiting for a second admin. approved = second admin approved, change being applied. applied = dry-run was turned OFF. cancelled = withdrawn, expired or the audit write failed."
+    },
+    "requested_by": {
+      "type": "string",
+      "description": "Name of the admin who asked to turn dry-run OFF."
+    },
+    "requested_by_id": {
+      "type": "string",
+      "description": "User id of the requester."
+    },
+    "requested_by_email": {
+      "type": "string",
+      "description": "Email of the requester."
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "A request that is not approved by then is dead."
+    },
+    "preview_week": {
+      "type": "string",
+      "description": "Campaign week of the reviewed preview."
+    },
+    "preview_run_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "CampaignRun ids (outreach and follow-up dry runs) that were on screen when the request was made."
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Name of the second admin."
+    },
+    "approved_by_id": {
+      "type": "string",
+      "description": "User id of the second admin. Must differ from requested_by_id."
+    },
+    "approved_by_email": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "applied_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "requested_by_id",
+    "requested_at"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    }
+  }
+}

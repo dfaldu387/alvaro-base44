@@ -1,0 +1,97 @@
+{
+  "name": "DayAvailability",
+  "type": "object",
+  "properties": {
+    "day": {
+      "type": "string",
+      "enum": [
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "description": "Day of the week"
+    },
+    "demand_level": {
+      "type": "string",
+      "enum": [
+        "high_availability",
+        "limited",
+        "high_demand"
+      ],
+      "default": "high_availability",
+      "description": "Overall day demand level"
+    },
+    "morning_demand": {
+      "type": "string",
+      "enum": [
+        "high_availability",
+        "limited",
+        "high_demand"
+      ],
+      "default": "high_availability"
+    },
+    "midday_demand": {
+      "type": "string",
+      "enum": [
+        "high_availability",
+        "limited",
+        "high_demand"
+      ],
+      "default": "high_availability"
+    },
+    "afternoon_demand": {
+      "type": "string",
+      "enum": [
+        "high_availability",
+        "limited",
+        "high_demand"
+      ],
+      "default": "high_availability"
+    },
+    "evening_demand": {
+      "type": "string",
+      "enum": [
+        "high_availability",
+        "limited",
+        "high_demand"
+      ],
+      "default": "high_availability"
+    }
+  },
+  "required": [
+    "day"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

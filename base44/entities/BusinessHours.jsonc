@@ -1,0 +1,70 @@
+{
+  "name": "BusinessHours",
+  "type": "object",
+  "properties": {
+    "day_of_week": {
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "description": "Day of the week"
+    },
+    "is_open": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the business is open on this day"
+    },
+    "open_time": {
+      "type": "number",
+      "description": "Opening time as decimal hour (e.g. 9.0 = 9:00am, 13.5 = 1:30pm)"
+    },
+    "close_time": {
+      "type": "number",
+      "description": "Closing time as decimal hour (e.g. 17.0 = 5:00pm, 19.5 = 7:30pm)"
+    },
+    "team_member_id": {
+      "type": "string",
+      "description": "Optional barber override; null/empty = business default (source of truth for public booking). Supports future per-barber bookable hours."
+    }
+  },
+  "required": [
+    "day_of_week"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

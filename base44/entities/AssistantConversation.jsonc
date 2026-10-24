@@ -1,0 +1,140 @@
+{
+  "name": "AssistantConversation",
+  "type": "object",
+  "description": "One free-text booking conversation handled by the AI assistant, kept as a unit: the constraint parsed, the slots the engine returned, which were offered and accepted, every re-validation and the booking id. The model never writes here; only the assistant's code does.",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "The known client this conversation is with. A conversation never exists for a stranger."
+    },
+    "from_phone": {
+      "type": "string",
+      "description": "The client's number in standard Australian form."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "drafting",
+        "offered",
+        "booked",
+        "escalated",
+        "closed"
+      ],
+      "default": "offered",
+      "description": "drafting = an offer is written and waits for Alvaro's tap (draft mode); offered = the customer has the offer; booked = a booking was created; escalated = handed to Alvaro; closed = abandoned or replaced."
+    },
+    "constraint": {
+      "type": "object",
+      "description": "What the customer asked for, as parsed into a constraint: date (resolved Sydney date), earliest_time and latest_time (HH:MM, customer's own bounds), service_hint, confidence. Never contains a time the model proposed."
+    },
+    "address_source": {
+      "type": "string",
+      "enum": [
+        "client_record",
+        "last_booking"
+      ],
+      "description": "Where the stand-in booking's address came from: the client's current address on record, or the last booking's address when none is on record."
+    },
+    "offered_slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "start_decimal": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Exactly the slots the engine returned and that were put to the customer (at most three). The only times the guard allows for this conversation."
+    },
+    "offered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current offer reached the customer (for a draft, when it was tapped)."
+    },
+    "accepted_slot": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "start_decimal": {
+          "type": "number"
+        },
+        "date": {
+          "type": "string"
+        }
+      },
+      "description": "The slot the customer accepted."
+    },
+    "booking_request_id": {
+      "type": "string",
+      "description": "The booking created from this conversation, if any."
+    },
+    "turns": {
+      "type": "number",
+      "default": 0,
+      "description": "Customer messages handled in this conversation."
+    },
+    "log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string"
+          },
+          "step": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Every step in order: constraint parsed, engine search, slots offered, slot accepted, each re-validation and its outcome, booking created. Plain language, no phone numbers or addresses."
+    }
+  },
+  "required": [
+    "client_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "service_role_only"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
